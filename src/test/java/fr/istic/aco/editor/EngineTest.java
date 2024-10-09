@@ -1,5 +1,8 @@
 package fr.istic.aco.editor;
 
+import fr.istic.aco.editor.Engine;
+import fr.istic.aco.editor.EngineImpl;
+import fr.istic.aco.editor.Selection;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
