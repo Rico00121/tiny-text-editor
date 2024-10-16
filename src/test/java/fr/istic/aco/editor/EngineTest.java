@@ -30,17 +30,25 @@ class EngineTest {
 
     @Test
     void getBufferContents() {
-        todo();
+        engine.insert("car");
+        assertEquals("car",engine.getBufferContents());
     }
 
     @Test
     void getClipboardContents() {
-        todo();
+        engine.copySelectedText();
     }
 
     @Test
     void cutSelectedText() {
-        todo();
+        engine.insert("hello");
+        engine.getSelection().setBeginIndex(2);
+        engine.getSelection().setEndIndex(4);
+
+        engine.cutSelectedText();
+
+        assertEquals("heo", engine.getBufferContents());
+        assertEquals("ll", engine.getClipboardContents());
     }
 
     @Test
@@ -51,5 +59,19 @@ class EngineTest {
     @Test
     void pasteClipboard() {
         todo();
+    }
+
+    @Test
+    void insert() {
+        engine.insert("hello");
+        assertEquals("hello", engine.getBufferContents());
+
+        Selection selection = engine.getSelection();
+        selection.setBeginIndex(2);
+        selection.setEndIndex(4);
+
+        engine.insert("aaa");
+        assertEquals("heaaao", engine.getBufferContents());
+
     }
 }

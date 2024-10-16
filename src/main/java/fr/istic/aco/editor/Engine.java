@@ -47,6 +47,7 @@ public interface Engine {
      */
     void pasteClipboard();
 
+
     /**
      * Inserts a string in the buffer, which replaces the contents of the selection
      * @param s the text to insert
