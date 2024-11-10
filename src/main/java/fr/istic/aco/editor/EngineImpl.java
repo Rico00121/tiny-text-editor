@@ -69,7 +69,8 @@ public class EngineImpl implements Engine {
      */
     @Override
     public void pasteClipboard() {
-        clipboard = selection.toString();
+
+        insert(clipboard);
     }
 
     /**
@@ -80,7 +81,7 @@ public class EngineImpl implements Engine {
     @Override
     public void insert(String s) {
         buffer.replace(selection.getBeginIndex(), selection.getEndIndex(), s);
-        selection.setEndIndex(selection.getBeginIndex()+s.length());
+        selection.setEndIndex(selection.getBeginIndex() + s.length());
         selection.setBeginIndex(selection.getEndIndex());
     }
 

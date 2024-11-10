@@ -1,6 +1,6 @@
 package fr.istic.aco.editor;
 
-public class SelectionImpl implements Selection{
+public class SelectionImpl implements Selection {
     private int beginIndex;
     private int endIndex;
     private final StringBuffer buffer;
@@ -33,13 +33,15 @@ public class SelectionImpl implements Selection{
 
     @Override
     public void setBeginIndex(int beginIndex) {
-        // TODO: make sure begin index is not bigger than end index.
+        if (beginIndex > this.endIndex || beginIndex < getBufferBeginIndex() || beginIndex > getBufferEndIndex()) {
+            throw new IndexOutOfBoundsException();
+        }
         this.beginIndex = beginIndex;
     }
 
     @Override
     public void setEndIndex(int endIndex) {
-        if (this.beginIndex > this.endIndex) {
+        if (this.beginIndex > endIndex || endIndex > getBufferEndIndex() || endIndex < getBufferBeginIndex()) {
             throw new IndexOutOfBoundsException();
         }
         this.endIndex = endIndex;
