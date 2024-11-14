@@ -1,4 +1,4 @@
-package fr.istic.aco.editor;
+package fr.istic.aco.editor.kernel;
 
 public class EngineImpl implements Engine {
     private final StringBuffer buffer;

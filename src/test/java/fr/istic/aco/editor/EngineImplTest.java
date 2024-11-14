@@ -1,5 +1,8 @@
 package fr.istic.aco.editor;
 
+import fr.istic.aco.editor.kernel.Engine;
+import fr.istic.aco.editor.kernel.EngineImpl;
+import fr.istic.aco.editor.kernel.Selection;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -19,7 +22,6 @@ class EngineImplTest {
     }
 
     @Test
-    @DisplayName("Buffer must be empty after initialisation")
     void getSelection() {
         Selection selection = engine.getSelection();
         assertEquals(selection.getBufferBeginIndex(), selection.getBeginIndex());

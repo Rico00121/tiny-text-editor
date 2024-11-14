@@ -1,5 +1,6 @@
 package fr.istic.aco.editor;
 
+import fr.istic.aco.editor.kernel.SelectionImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
