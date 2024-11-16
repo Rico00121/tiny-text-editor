@@ -1,32 +1,33 @@
 package fr.istic.aco.editor;
 
-import fr.istic.aco.editor.commands.Command;
-import fr.istic.aco.editor.commands.Copy;
-import fr.istic.aco.editor.commands.Insert;
-import fr.istic.aco.editor.commands.MoveSelection;
+import fr.istic.aco.editor.commands.*;
 import fr.istic.aco.editor.kernel.Engine;
 import fr.istic.aco.editor.kernel.EngineImpl;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import static fr.istic.aco.editor.Configuration.*;
 
 
 public class InvokerTest {
     private Engine engine;
     private Invoker invoker;
+
     @org.junit.jupiter.api.BeforeEach
     void setUp() {
         this.engine = new EngineImpl();
         this.invoker = new Invoker();
+        invoker.addCommand(INSERT, new Insert(engine, invoker));
+        invoker.addCommand(MOVE_SELECTION, new MoveSelection(engine, invoker));
+        invoker.addCommand(COPY, new Copy(engine));
+        invoker.addCommand(CUT, new Cut(engine));
+        invoker.addCommand(DELETE, new Delete(engine));
+        invoker.addCommand(PASTE, new Paste(engine));
     }
 
     @Test
     void insert() {
-        Command insert = new Insert(engine, invoker);
-        invoker.addCommand("insert", insert);
         invoker.setText("hello");
-        invoker.playCommand("insert");
+        invoker.playCommand(INSERT);
 
         Assertions.assertEquals("hello", engine.getBufferContents());
     }
@@ -35,21 +36,71 @@ public class InvokerTest {
     void moveSelection() {
         prepareHelloData();
 
-        Command moveSelection = new MoveSelection(engine, invoker);
-        invoker.addCommand("moveSelection", moveSelection);
         invoker.setSelection(1, 2);
-        invoker.playCommand("moveSelection");
+        invoker.playCommand(MOVE_SELECTION);
+
 
         Assertions.assertEquals(1, engine.getSelection().getBeginIndex());
         Assertions.assertEquals(2, engine.getSelection().getEndIndex());
     }
 
+    @Test
+    void copy() {
+        prepareHelloData();
 
+        invoker.setSelection(1, 3);
+        invoker.playCommand(MOVE_SELECTION);
+        invoker.playCommand(COPY);
 
-    private void prepareHelloData(){
-        Command insert = new Insert(engine, invoker);
-        invoker.addCommand("insert", insert);
+        Assertions.assertEquals(1, engine.getSelection().getBeginIndex());
+        Assertions.assertEquals(3, engine.getSelection().getEndIndex());
+        Assertions.assertEquals("el", engine.getClipboardContents());
+
+    }
+
+    @Test
+    void cut() {
+        prepareHelloData();
+
+        invoker.setSelection(1, 3);
+        invoker.playCommand(MOVE_SELECTION);
+        invoker.playCommand(CUT);
+
+        Assertions.assertEquals(1, engine.getSelection().getBeginIndex());
+        Assertions.assertEquals(1, engine.getSelection().getEndIndex());
+        Assertions.assertEquals("el", engine.getClipboardContents());
+    }
+
+    @Test
+    void delete() {
+        prepareHelloData();
+
+        invoker.setSelection(1, 3);
+        invoker.playCommand(MOVE_SELECTION);
+        invoker.playCommand(DELETE);
+
+        Assertions.assertEquals(1, engine.getSelection().getBeginIndex());
+        Assertions.assertEquals(1, engine.getSelection().getEndIndex());
+        Assertions.assertEquals("hlo", engine.getBufferContents());
+
+    }
+
+    @Test
+    void paste() {
+        prepareHelloData();
+
+        invoker.setSelection(1, 3);
+        invoker.playCommand(MOVE_SELECTION);
+        invoker.playCommand(CUT);
+        invoker.playCommand(PASTE);
+
+        Assertions.assertEquals(3, engine.getSelection().getBeginIndex());
+        Assertions.assertEquals(3, engine.getSelection().getEndIndex());
+        Assertions.assertEquals("hello", engine.getBufferContents());
+    }
+
+    private void prepareHelloData() {
         invoker.setText("hello");
-        invoker.playCommand("insert");
+        invoker.playCommand(INSERT);
     }
 }
