@@ -1,12 +1,14 @@
 package fr.istic.aco.editor.kernel;
 
+
+import org.springframework.stereotype.Service;
 /**
  * Main API for the text editing engine
  *
  * @author plouzeau
  * @version 1.0
  */
-
+@Service
 public interface Engine {
 
     /**
