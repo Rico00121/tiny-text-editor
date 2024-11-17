@@ -88,6 +88,8 @@ public class EngineImpl implements Engine {
     /**
      * Removes the contents of the selection in the buffer
      */
+
+    // TODO: delete should be worked when index is same. Consider the situation of index == 0
     @Override
     public void delete() {
         buffer.delete(selection.getBeginIndex(), selection.getEndIndex());
