@@ -92,7 +92,17 @@ public class EngineImpl implements Engine {
     // TODO: delete should be worked when index is same. Consider the situation of index == 0
     @Override
     public void delete() {
-        buffer.delete(selection.getBeginIndex(), selection.getEndIndex());
-        selection.setEndIndex(selection.getBeginIndex());
+        int beginIndex = this.selection.getBeginIndex();
+        int endIndex = this.selection.getEndIndex();
+
+        if (beginIndex == endIndex && beginIndex > 0) {
+            buffer.delete(beginIndex - 1, beginIndex);
+            selection.setBeginIndex(beginIndex - 1);
+            selection.setEndIndex(beginIndex - 1);
+        }
+
+        buffer.delete(beginIndex, endIndex);
+        selection.setEndIndex(beginIndex);
     }
+
 }
