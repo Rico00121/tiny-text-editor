@@ -15,8 +15,13 @@ public class MoveSelection extends AbstractConcreteCommand implements CommandOri
 
     @Override
     public void execute() {
-        this.engine.getSelection().setBeginIndex(invoker.getBeginIndex());
-        this.engine.getSelection().setEndIndex(invoker.getEndIndex());
+        if (this.invoker.getEndIndex() < this.engine.getSelection().getBeginIndex() ){
+            this.engine.getSelection().setBeginIndex(this.invoker.getBeginIndex());
+            this.engine.getSelection().setEndIndex(this.invoker.getEndIndex());
+        } else {
+            this.engine.getSelection().setEndIndex(this.invoker.getEndIndex());
+            this.engine.getSelection().setBeginIndex(this.invoker.getBeginIndex());
+        }
         this.recorder.save(this);
     }
 
