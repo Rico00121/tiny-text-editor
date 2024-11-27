@@ -3,6 +3,7 @@ package fr.istic.aco.editor;
 import fr.istic.aco.editor.commands.*;
 import fr.istic.aco.editor.kernel.Engine;
 import fr.istic.aco.editor.kernel.EngineImpl;
+import fr.istic.aco.editor.kernel.Recorder;
 import org.springframework.context.annotation.Bean;
 
 @org.springframework.context.annotation.Configuration
@@ -17,20 +18,25 @@ public class Configuration {
     public static final String DELETE="delete";
     public static final String PASTE = "paste";
 
-    @Bean
-    public Engine engine() {
-        return new EngineImpl();
-    }
+    public static final String START_RECORD = "startRecord";
 
+    public static final String STOP_RECORD = "stopRecord";
+
+    public static final String REPLAY_RECORD = "replayRecord";
     @Bean
     public Invoker invoker() {
+        EngineImpl engine = new EngineImpl();
         Invoker invoker = new Invoker();
-        invoker.addCommand(INSERT, new Insert(engine(), invoker));
-        invoker.addCommand(MOVE_SELECTION, new MoveSelection(engine(), invoker));
-        invoker.addCommand(COPY, new Copy(engine()));
-        invoker.addCommand(CUT, new Cut(engine()));
-        invoker.addCommand(DELETE, new Delete(engine()));
-        invoker.addCommand(PASTE, new Paste(engine()));
+        Recorder recorder = new Recorder();
+        invoker.addCommand(INSERT, new Insert(engine, invoker, recorder));
+        invoker.addCommand(MOVE_SELECTION, new MoveSelection(engine, invoker, recorder));
+        invoker.addCommand(COPY, new Copy(engine));
+        invoker.addCommand(CUT, new Cut(engine));
+        invoker.addCommand(DELETE, new Delete(engine));
+        invoker.addCommand(PASTE, new Paste(engine));
+        invoker.addCommand(START_RECORD, new Start(recorder));
+        invoker.addCommand(STOP_RECORD, new Stop(recorder));
+        invoker.addCommand(REPLAY_RECORD, new Replay(recorder));
         return invoker;
     }
 

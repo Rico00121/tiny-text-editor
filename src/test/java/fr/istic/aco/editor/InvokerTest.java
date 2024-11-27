@@ -3,6 +3,7 @@ package fr.istic.aco.editor;
 import fr.istic.aco.editor.commands.*;
 import fr.istic.aco.editor.kernel.Engine;
 import fr.istic.aco.editor.kernel.EngineImpl;
+import fr.istic.aco.editor.kernel.Recorder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import static fr.istic.aco.editor.Configuration.*;
@@ -16,12 +17,17 @@ public class InvokerTest {
     void setUp() {
         this.engine = new EngineImpl();
         this.invoker = new Invoker();
-        invoker.addCommand(INSERT, new Insert(engine, invoker));
-        invoker.addCommand(MOVE_SELECTION, new MoveSelection(engine, invoker));
+        Recorder recorder = new Recorder();
+
+        invoker.addCommand(INSERT, new Insert(engine, invoker, recorder));
+        invoker.addCommand(MOVE_SELECTION, new MoveSelection(engine, invoker, recorder));
         invoker.addCommand(COPY, new Copy(engine));
         invoker.addCommand(CUT, new Cut(engine));
         invoker.addCommand(DELETE, new Delete(engine));
         invoker.addCommand(PASTE, new Paste(engine));
+        invoker.addCommand(START_RECORD, new Start(recorder));
+        invoker.addCommand(STOP_RECORD, new Stop(recorder));
+        invoker.addCommand(REPLAY_RECORD, new Replay(recorder));
     }
 
     @Test
@@ -97,6 +103,39 @@ public class InvokerTest {
         Assertions.assertEquals(3, engine.getSelection().getBeginIndex());
         Assertions.assertEquals(3, engine.getSelection().getEndIndex());
         Assertions.assertEquals("hello", engine.getBufferContents());
+    }
+
+    @Test
+    void replay_insert() {
+        prepareHelloData();
+        this.invoker.playCommand(START_RECORD);
+
+        this.invoker.setText(" world");
+        this.invoker.playCommand(INSERT);
+
+        this.invoker.playCommand(STOP_RECORD);
+        this.invoker.playCommand(REPLAY_RECORD);
+
+        Assertions.assertEquals("hello world world", this.engine.getBufferContents());
+    }
+
+    @Test
+    void replay_selection() {
+        prepareHelloData();
+        this.invoker.playCommand(START_RECORD);
+
+        invoker.setSelection(1, 2);
+        invoker.playCommand(MOVE_SELECTION);
+
+        this.invoker.playCommand(STOP_RECORD);
+
+        this.invoker.setText(" world");
+        this.invoker.playCommand(INSERT);
+
+        this.invoker.playCommand(REPLAY_RECORD);
+
+        Assertions.assertEquals(1, engine.getSelection().getBeginIndex());
+        Assertions.assertEquals(2, engine.getSelection().getEndIndex());
     }
 
     private void prepareHelloData() {
