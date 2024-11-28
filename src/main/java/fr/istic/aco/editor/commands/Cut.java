@@ -15,5 +15,6 @@ public class Cut extends AbstractConcreteCommand implements Command {
     }
 
     public void restoreFrom(Memento memento) {
+        
     }
 }

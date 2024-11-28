@@ -21,7 +21,7 @@ public class InvokerTest {
 
         invoker.addCommand(INSERT, new Insert(engine, invoker, recorder));
         invoker.addCommand(MOVE_SELECTION, new MoveSelection(engine, invoker, recorder));
-        invoker.addCommand(COPY, new Copy(engine));
+        invoker.addCommand(COPY, new Copy(engine, recorder));
         invoker.addCommand(CUT, new Cut(engine));
         invoker.addCommand(DELETE, new Delete(engine));
         invoker.addCommand(PASTE, new Paste(engine));
@@ -136,6 +136,19 @@ public class InvokerTest {
 
         Assertions.assertEquals(1, engine.getSelection().getBeginIndex());
         Assertions.assertEquals(2, engine.getSelection().getEndIndex());
+    }
+
+    @Test
+    void replay_copy() {
+        prepareHelloData();
+        this.invoker.playCommand(START_RECORD);
+        invoker.playCommand(COPY);
+        this.invoker.playCommand(STOP_RECORD);
+
+        this.invoker.setSelection(1,2);
+        this.invoker.playCommand(MOVE_SELECTION);
+        this.invoker.playCommand(REPLAY_RECORD);
+        Assertions.assertEquals("e", engine.getClipboardContents());
     }
 
     private void prepareHelloData() {

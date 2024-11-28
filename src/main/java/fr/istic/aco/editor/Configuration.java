@@ -1,7 +1,6 @@
 package fr.istic.aco.editor;
 
 import fr.istic.aco.editor.commands.*;
-import fr.istic.aco.editor.kernel.Engine;
 import fr.istic.aco.editor.kernel.EngineImpl;
 import fr.istic.aco.editor.kernel.Recorder;
 import org.springframework.context.annotation.Bean;
@@ -30,7 +29,7 @@ public class Configuration {
         Recorder recorder = new Recorder();
         invoker.addCommand(INSERT, new Insert(engine, invoker, recorder));
         invoker.addCommand(MOVE_SELECTION, new MoveSelection(engine, invoker, recorder));
-        invoker.addCommand(COPY, new Copy(engine));
+        invoker.addCommand(COPY, new Copy(engine, recorder));
         invoker.addCommand(CUT, new Cut(engine));
         invoker.addCommand(DELETE, new Delete(engine));
         invoker.addCommand(PASTE, new Paste(engine));
