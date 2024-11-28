@@ -1,6 +1,5 @@
 package fr.istic.aco.editor;
 
-import fr.istic.aco.editor.commands.*;
 import fr.istic.aco.editor.kernel.Engine;
 import fr.istic.aco.editor.kernel.EngineImpl;
 import fr.istic.aco.editor.kernel.Recorder;
@@ -16,18 +15,8 @@ public class InvokerTest {
     @org.junit.jupiter.api.BeforeEach
     void setUp() {
         this.engine = new EngineImpl();
-        this.invoker = new Invoker();
         Recorder recorder = new Recorder();
-
-        invoker.addCommand(INSERT, new Insert(engine, invoker, recorder));
-        invoker.addCommand(MOVE_SELECTION, new MoveSelection(engine, invoker, recorder));
-        invoker.addCommand(COPY, new Copy(engine, recorder));
-        invoker.addCommand(CUT, new Cut(engine));
-        invoker.addCommand(DELETE, new Delete(engine));
-        invoker.addCommand(PASTE, new Paste(engine));
-        invoker.addCommand(START_RECORD, new Start(recorder));
-        invoker.addCommand(STOP_RECORD, new Stop(recorder));
-        invoker.addCommand(REPLAY_RECORD, new Replay(recorder));
+        this.invoker = new Configuration().invoker(engine, recorder);
     }
 
     @Test

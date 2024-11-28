@@ -1,6 +1,7 @@
 package fr.istic.aco.editor;
 
 import fr.istic.aco.editor.commands.*;
+import fr.istic.aco.editor.kernel.Engine;
 import fr.istic.aco.editor.kernel.EngineImpl;
 import fr.istic.aco.editor.kernel.Recorder;
 import org.springframework.context.annotation.Bean;
@@ -23,10 +24,18 @@ public class Configuration {
 
     public static final String REPLAY_RECORD = "replayRecord";
     @Bean
-    public Invoker invoker() {
-        EngineImpl engine = new EngineImpl();
+    public Engine engine() {
+        return new EngineImpl();
+    }
+
+    @Bean
+    public Recorder recorder() {
+        return new Recorder();
+    }
+
+    @Bean
+    public Invoker invoker(Engine engine, Recorder recorder) {
         Invoker invoker = new Invoker();
-        Recorder recorder = new Recorder();
         invoker.addCommand(INSERT, new Insert(engine, invoker, recorder));
         invoker.addCommand(MOVE_SELECTION, new MoveSelection(engine, invoker, recorder));
         invoker.addCommand(COPY, new Copy(engine, recorder));
