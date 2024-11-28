@@ -111,16 +111,17 @@ public class InvokerTest {
     @Test
     void replay_selection() {
         prepareHelloData();
+        //start record
         this.invoker.playCommand(START_RECORD);
 
         invoker.setSelection(1, 2);
         invoker.playCommand(MOVE_SELECTION);
-
+        //stop record
         this.invoker.playCommand(STOP_RECORD);
 
         this.invoker.setText(" world");
         this.invoker.playCommand(INSERT);
-
+        //engine content: "hello world"
         this.invoker.playCommand(REPLAY_RECORD);
 
         Assertions.assertEquals(1, engine.getSelection().getBeginIndex());
@@ -137,7 +138,57 @@ public class InvokerTest {
         this.invoker.setSelection(1,2);
         this.invoker.playCommand(MOVE_SELECTION);
         this.invoker.playCommand(REPLAY_RECORD);
+
         Assertions.assertEquals("e", engine.getClipboardContents());
+    }
+
+    @Test
+    void replay_cut() {
+        prepareHelloData();
+        // hello
+        this.invoker.playCommand(START_RECORD);
+        invoker.playCommand(CUT);
+        this.invoker.playCommand(STOP_RECORD);
+
+        this.invoker.setSelection(1,2);
+        this.invoker.playCommand(MOVE_SELECTION);
+
+        this.invoker.playCommand(REPLAY_RECORD);
+
+        Assertions.assertEquals("e", engine.getClipboardContents());
+        Assertions.assertEquals("hllo", engine.getBufferContents());
+    }
+
+    @Test
+    void replay_delete() {
+        prepareHelloData();
+        this.invoker.playCommand(START_RECORD);
+        invoker.playCommand(DELETE);
+        // now is hell
+        this.invoker.playCommand(STOP_RECORD);
+
+        this.invoker.playCommand(REPLAY_RECORD);
+
+        Assertions.assertEquals("hel", engine.getBufferContents());
+    }
+
+    @Test
+    void replay_paste() {
+        prepareHelloData();
+        this.invoker.setSelection(1, 2);
+        this.invoker.playCommand(MOVE_SELECTION);
+        this.invoker.playCommand(COPY);
+
+        this.invoker.playCommand(START_RECORD);
+        invoker.playCommand(PASTE);
+        this.invoker.playCommand(STOP_RECORD);
+
+        this.invoker.setSelection(5, 5);
+        this.invoker.playCommand(MOVE_SELECTION);
+
+        this.invoker.playCommand(REPLAY_RECORD);
+
+        Assertions.assertEquals("helloe", engine.getBufferContents());
     }
 
     private void prepareHelloData() {

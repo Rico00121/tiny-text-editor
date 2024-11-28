@@ -39,9 +39,9 @@ public class Configuration {
         invoker.addCommand(INSERT, new Insert(engine, invoker, recorder));
         invoker.addCommand(MOVE_SELECTION, new MoveSelection(engine, invoker, recorder));
         invoker.addCommand(COPY, new Copy(engine, recorder));
-        invoker.addCommand(CUT, new Cut(engine));
-        invoker.addCommand(DELETE, new Delete(engine));
-        invoker.addCommand(PASTE, new Paste(engine));
+        invoker.addCommand(CUT, new Cut(engine, recorder));
+        invoker.addCommand(DELETE, new Delete(engine, recorder));
+        invoker.addCommand(PASTE, new Paste(engine, recorder));
         invoker.addCommand(START_RECORD, new Start(recorder));
         invoker.addCommand(STOP_RECORD, new Stop(recorder));
         invoker.addCommand(REPLAY_RECORD, new Replay(recorder));

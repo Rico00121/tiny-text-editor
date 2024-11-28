@@ -39,5 +39,6 @@ public class Recorder {
             commandOriginator.restoreFrom(memento);
             commandOriginator.execute();
         });
+        this.isReplaying = false;
     }
 }
