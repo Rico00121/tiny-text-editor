@@ -8,6 +8,10 @@ import java.util.List;
 public class Recorder {
     private final List<Pair<CommandOriginator, Memento>> actions;
 
+    public boolean isReplaying() {
+        return isReplaying;
+    }
+
     private boolean isReplaying;
     public boolean isRecording;
 
