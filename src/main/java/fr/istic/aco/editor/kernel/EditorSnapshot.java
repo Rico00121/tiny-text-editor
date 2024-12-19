@@ -5,10 +5,10 @@ package fr.istic.aco.editor.kernel;
  * This class stores a snapshot of the editor's state.
  */
 public class EditorSnapshot {
-    private StringBuffer bufferContent;
-    private int beginIndex;
-    private int endIndex;
-    private String clipboard;
+    private final StringBuffer bufferContent;
+    private final int beginIndex;
+    private final int endIndex;
+    private final String clipboard;
 
     /**
      * Constructor for EditorMemento.
