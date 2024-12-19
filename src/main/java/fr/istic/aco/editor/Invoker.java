@@ -46,7 +46,6 @@ public class Invoker {
 
     public void playCommand(String id) {
         Command command = commands.get(id);
-
         command.execute();
     }
 

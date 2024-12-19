@@ -48,8 +48,8 @@ public class Configuration {
     @Bean
     public Invoker invoker(Engine engine, Recorder recorder, UndoManager undoManager) {
         Invoker invoker = new Invoker();
-        invoker.addCommand(INSERT, new Insert(engine, invoker, recorder));
-        invoker.addCommand(MOVE_SELECTION, new MoveSelection(engine, invoker, recorder));
+        invoker.addCommand(INSERT, new Insert(engine, invoker, recorder, undoManager));
+        invoker.addCommand(MOVE_SELECTION, new MoveSelection(engine, invoker, recorder, undoManager));
         invoker.addCommand(COPY, new Copy(engine, recorder));
         invoker.addCommand(CUT, new Cut(engine, recorder));
         invoker.addCommand(DELETE, new Delete(engine, recorder));

@@ -11,8 +11,8 @@ import java.util.ArrayList;
 public class UndoManager {
     private final ArrayList<EditorSnapshot> pastStates;
     private final ArrayList<EditorSnapshot> futureStates;
-    private final ArrayList<Pair<Command, Memento>> pastCommands;
-    private final ArrayList<Pair<Command, Memento>> futureCommands;
+    private final ArrayList<Pair<CommandOriginator, Memento>> pastCommands;
+    private final ArrayList<Pair<CommandOriginator, Memento>> futureCommands;
     int k = 5; //we store a snapshot after every k commands
     private final Engine engine;
 
@@ -30,8 +30,9 @@ public class UndoManager {
     /**
      * This method is used to store the commands upon each operation
      */
-    public void storeCommand(Pair<Command, Memento> command) {
-        pastCommands.add(command);
+    public void storeCommand(CommandOriginator originator) {
+        Memento memento = originator.generateMemento();
+        pastCommands.add(new Pair<>(originator, memento));
         futureCommands.clear();
     }
 
@@ -57,7 +58,7 @@ public class UndoManager {
             int i = 0;
             while (i < k && !pastCommands.isEmpty()) {
                 //Execute the k commands since the last snapshot
-                Pair<Command, Memento> command = pastCommands.get(pastCommands.size() - (k+i));
+                Pair<CommandOriginator, Memento> command = pastCommands.get(pastCommands.size() - (k+i));
                 command.first().execute();
                 i++;
 
@@ -75,7 +76,7 @@ public class UndoManager {
             //After restoring the state, we apply the last k commands
             int i = 0;
             while (i < k && !futureCommands.isEmpty()) {
-                Pair<Command, Memento> command = futureCommands.get(futureCommands.size() - 1);
+                Pair<CommandOriginator, Memento> command = futureCommands.get(futureCommands.size() - 1);
                 command.first().execute();
                 i++;
             }
