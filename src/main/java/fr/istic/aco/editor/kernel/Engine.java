@@ -58,4 +58,10 @@ public interface Engine {
      * Removes the contents of the selection in the buffer
      */
     void delete();
+
+    /**
+     * It recovers editor using the previous snapshot, which is stored in the memento.
+     *
+     */
+    void restoreFrom(EditorSnapshot m);
 }

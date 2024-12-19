@@ -1,8 +1,6 @@
 package fr.istic.aco.editor;
 
 import fr.istic.aco.editor.commands.Command;
-import fr.istic.aco.editor.commands.Insert;
-import fr.istic.aco.editor.kernel.Engine;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -14,6 +12,7 @@ public class Invoker {
 
     private int endIndex;
     private final Map<String, Command> commands;
+
 
     public Invoker() {
         this.text = "";
@@ -47,6 +46,7 @@ public class Invoker {
 
     public void playCommand(String id) {
         Command command = commands.get(id);
+
         command.execute();
     }
 
