@@ -174,7 +174,10 @@ export default function TextEditor() {
                                             variant="outlined"
                                             sx={{
                                                 flex: 1,
+                                                width: '100%',
+                                                maxHeight: '100px',
                                                 p: 2,
+                                                wordBreak: 'break-word',
                                                 overflowY: 'auto',
                                                 fontFamily: '"Fira Code", "Roboto Mono", monospace',
                                                 fontSize: '0.9rem',
@@ -208,7 +211,7 @@ export default function TextEditor() {
                             </Grid2>
                         </Grid2>
                         <Grid2 item size={6}>
-                            <Paper elevation={3} sx={{ height: '100%', display: 'flex', flexDirection: 'column', p: 2 }}>
+                            <Paper elevation={3} sx={{ height: '600px', display: 'flex', flexDirection: 'column', p: 2 }}>
                                 <Typography variant="h5" gutterBottom sx={{ color: '#00FF00' }}>
                                     Editor History
                                 </Typography>
