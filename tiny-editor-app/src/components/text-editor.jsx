@@ -1,17 +1,16 @@
-import React, { useState, useEffect } from 'react'
-import { ThemeProvider, createTheme } from '@mui/material/styles'
+import React, {useState} from 'react'
+import {alpha, createTheme, ThemeProvider} from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
-import Grid from '@mui/material/Grid'
 import Paper from '@mui/material/Paper'
 import Typography from '@mui/material/Typography'
 import TextField from '@mui/material/TextField'
 import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
 import ListItemText from '@mui/material/ListItemText'
-import { alpha } from '@mui/material/styles'
 import {Button, Grid2} from "@mui/material";
+import {copy, cut, deleteText, insertText, moveSelection, paste} from "../service/editor-service";
 
 // Create a hacker-inspired dark theme
 const hackerTheme = createTheme({
@@ -71,38 +70,60 @@ export default function TextEditor() {
     const [history, setHistory] = useState([])
 
 
-    const handleInputChange = (e) => {
-        const newText = e.target.value
-        setInputText(newText)
-        setOutputText(newText)
-        setHistory(prev => [`Text updated: ${new Date().toLocaleTimeString()}`, ...prev])
+    function updateStatus(res) {
+        setInputText(res.currentBufferContent)
+        setOutputText(res.currentBufferContent)
+        setClipboardContent(res.clipboard)
+        setHistory(history => [`Text updated: ${new Date().toLocaleTimeString()} \n
+              ${JSON.stringify(res, null, 2)}
+            `, ...history])
+    }
+
+    const handleInputChange = (char) => {
+        insertText(char).then(res => {
+            updateStatus(res);
+        })
     }
 
     const handleSelectChange = (e) => {
-        console.log('now selected:' + e.target.selectionStart + ','+ e.target.selectionEnd);
+        moveSelection(e.target.selectionStart, e.target.selectionEnd).then(res => updateStatus(res)).then(
+            () => console.log('now selected:' + e.target.selectionStart + ',' + e.target.selectionEnd)
+        )
     }
 
-    const handleCopy = (e) => {
-        console.log("copy happen")
+    const handleCopy = () => {
+        copy().then(res => updateStatus(res))
     }
 
-    const handlePaste = (e) => {
-        console.log("paste happen")
+    const handlePaste = () => {
+        paste().then(res => updateStatus(res))
     }
 
-    const handleCut = (e) => {
-        console.log("cut happen")
+    const handleCut = () => {
+        cut().then(res => updateStatus(res))
     }
 
     const handleKeyDown = (e) => {
+        console.log(e.key)
+        if ((e.key === 'a') || e.key === 'c' || e.key === 'x' || e.key === 'z' || e.key === 'v'
+            && (e.metaKey || e.ctrlKey || e.shiftKey)) {
+            return; // 或者 e.preventDefault();
+        }
+        const isCharacterKey = e.key.length === 1 && e.key.match(/[a-zA-Z0-9\s.,!?;:'"-]/);
+        if (isCharacterKey) {
+            // handle normal input behavior
+            handleInputChange(e.key);
+        }
+
         if (e.key === 'Backspace' || e.key === 'Delete') {
             console.log('press delete')
+            deleteText().then(res => updateStatus(res))
         }
     };
 
     return (
         <ThemeProvider theme={hackerTheme}>
-            <CssBaseline />
+            <CssBaseline/>
             <Container
                 sx={{height: '100vh', width: '100vw'}}>
                 <Box
@@ -127,12 +148,12 @@ export default function TextEditor() {
                     >Tiny Text Editor</Typography>
                     {/* Use Grid to make it responsive */}
                     <Grid2 container spacing={3}
-                          sx={{ display: 'flex', flexDirection: 'row' }}>
+                           sx={{display: 'flex', flexDirection: 'row'}}>
                         <Grid2 container size={6} spacing={3}
-                               sx={{ display: 'flex', flexDirection: 'column' }}>
+                               sx={{display: 'flex', flexDirection: 'column'}}>
                             <Grid2 item size={12}>
-                                <Paper elevation={3} sx={{ p: 2 }}>
-                                    <Typography variant="h5" gutterBottom sx={{ color: '#00FF00' }}>
+                                <Paper elevation={3} sx={{p: 2}}>
+                                    <Typography variant="h5" gutterBottom sx={{color: '#00FF00'}}>
                                         Input
                                     </Typography>
                                     <Box sx={{paddingY: 1}}>
@@ -145,7 +166,6 @@ export default function TextEditor() {
                                         multiline
                                         rows={5}
                                         value={inputText}
-                                        onChange={handleInputChange}
                                         onSelect={handleSelectChange}
                                         onCopy={handleCopy}
                                         onCut={handleCut}
@@ -165,11 +185,11 @@ export default function TextEditor() {
                                 </Paper>
                             </Grid2>
                             <Grid2 item size={12}>
-                                <Paper elevation={3} sx={{ display: 'flex', flexDirection: 'column', p: 2 }}>
-                                    <Typography variant="h5" gutterBottom sx={{ color: '#00FF00' }}>
+                                <Paper elevation={3} sx={{display: 'flex', flexDirection: 'column', p: 2}}>
+                                    <Typography variant="h5" gutterBottom sx={{color: '#00FF00'}}>
                                         Editor State
                                     </Typography>
-                                    <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
+                                    <Box sx={{flex: 1, display: 'flex', flexDirection: 'column', gap: 2}}>
                                         <Paper
                                             variant="outlined"
                                             sx={{
@@ -185,7 +205,7 @@ export default function TextEditor() {
                                                 backgroundColor: alpha('#000000', 0.5),
                                             }}
                                         >
-                                            <Typography variant="subtitle2" gutterBottom sx={{ color: '#00FF00' }}>
+                                            <Typography variant="subtitle2" gutterBottom sx={{color: '#00FF00'}}>
                                                 Current Content:
                                             </Typography>
                                             {outputText || 'No content'}
@@ -198,9 +218,12 @@ export default function TextEditor() {
                                                 fontSize: '0.9rem',
                                                 color: '#00FF00',
                                                 backgroundColor: alpha('#000000', 0.5),
+                                                wordBreak: 'break-word',
+                                                overflowY: 'auto',
+                                                maxHeight: '100px',
                                             }}
                                         >
-                                            <Typography variant="subtitle2" gutterBottom sx={{ color: '#00FF00' }}>
+                                            <Typography variant="subtitle2" gutterBottom sx={{color: '#00FF00'}}>
                                                 Clipboard Content:
                                             </Typography>
                                             {clipboardContent || 'Empty'}
@@ -211,8 +234,8 @@ export default function TextEditor() {
                             </Grid2>
                         </Grid2>
                         <Grid2 item size={6}>
-                            <Paper elevation={3} sx={{ height: '600px', display: 'flex', flexDirection: 'column', p: 2 }}>
-                                <Typography variant="h5" gutterBottom sx={{ color: '#00FF00' }}>
+                            <Paper elevation={3} sx={{height: '600px', display: 'flex', flexDirection: 'column', p: 2}}>
+                                <Typography variant="h5" gutterBottom sx={{color: '#00FF00'}}>
                                     Editor History
                                 </Typography>
 
@@ -227,7 +250,7 @@ export default function TextEditor() {
                                 >
                                     <List dense>
                                         {history.map((event, index) => (
-                                            <ListItem key={index} sx={{ py: 0.5 }}>
+                                            <ListItem key={index} sx={{py: 0.5}}>
                                                 <ListItemText
                                                     primary={event}
                                                     sx={{
