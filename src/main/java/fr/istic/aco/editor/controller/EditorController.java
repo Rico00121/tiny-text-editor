@@ -42,7 +42,8 @@ public class EditorController {
         EventResponse response = new EventResponse(
                 event.name(),
                 engine.getBufferContents(),
-                new Selected(engine.getSelection().getBeginIndex(), engine.getSelection().getEndIndex())
+                new Selected(engine.getSelection().getBeginIndex(), engine.getSelection().getEndIndex()),
+                engine.getClipboardContents()
         );
         return ResponseEntity.ok(response);
     }
