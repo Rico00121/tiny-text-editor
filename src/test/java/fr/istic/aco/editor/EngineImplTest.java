@@ -1,8 +1,10 @@
 package fr.istic.aco.editor;
 
+import fr.istic.aco.editor.kernel.EditorSnapshot;
 import fr.istic.aco.editor.kernel.Engine;
 import fr.istic.aco.editor.kernel.EngineImpl;
 import fr.istic.aco.editor.kernel.Selection;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -135,5 +137,59 @@ class EngineImplTest {
         assertEquals("hello", engine.getBufferContents());
     }
 
+    @Test
+    void create_immutable_snapshot_when_engine_is_modified() {
+        engine.insert("hello");
+        Selection selection = engine.getSelection();
+        selection.setBeginIndex(2);
+        selection.setEndIndex(4);
+        engine.copySelectedText();
+        //content: "hello", begin:2, end:4, clipboard: "ll"
+        EditorSnapshot snapshot = engine.createSnapshot();
+
+
+        engine.getSelection().setEndIndex(5);
+        engine.getSelection().setBeginIndex(5);
+        engine.insert(" world");
+        engine.getSelection().setEndIndex(11);
+        engine.getSelection().setBeginIndex(6);
+        engine.copySelectedText();
+        //content: "hello world", begin:6, end:11, clipboard: "world"
+
+        Assertions.assertEquals("hello", snapshot.getBufferContents().toString());
+        Assertions.assertEquals(2, snapshot.getBeginIndex());
+        Assertions.assertEquals(4, snapshot.getEndIndex());
+        Assertions.assertEquals("ll", snapshot.getClipboardContents());
+
+    }
+
+
+    @Test
+    void restore_from_snapshot_when_engine_is_modified() {
+        engine.insert("hello");
+        Selection selection = engine.getSelection();
+        selection.setBeginIndex(2);
+        selection.setEndIndex(4);
+        engine.copySelectedText();
+        //content: "hello", begin:2, end:4, clipboard: "ll"
+        EditorSnapshot snapshot = engine.createSnapshot();
+
+
+        engine.getSelection().setEndIndex(5);
+        engine.getSelection().setBeginIndex(5);
+        engine.insert(" world");
+        engine.getSelection().setEndIndex(11);
+        engine.getSelection().setBeginIndex(6);
+        engine.copySelectedText();
+        //content: "hello world", begin:6, end:11, clipboard: "world"
+
+        //restore snapshot
+        engine.restoreFrom(snapshot);
+
+        Assertions.assertEquals("hello", engine.getBufferContents());
+        Assertions.assertEquals(2, engine.getSelection().getBeginIndex());
+        Assertions.assertEquals(4, engine.getSelection().getEndIndex());
+        Assertions.assertEquals("ll", engine.getClipboardContents());
+    }
 
 }
