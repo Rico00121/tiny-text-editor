@@ -124,6 +124,7 @@ public class EngineImpl implements Engine {
      *
      * @return the memento
      */
+    @Override
     public EditorSnapshot createSnapshot() {
         return new EditorSnapshot(this.buffer, this.selection.getBeginIndex(), this.selection.getEndIndex(), this.clipboard);
     }

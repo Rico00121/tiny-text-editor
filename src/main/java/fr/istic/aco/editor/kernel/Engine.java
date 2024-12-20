@@ -64,4 +64,6 @@ public interface Engine {
      *
      */
     void restoreFrom(EditorSnapshot m);
+
+    EditorSnapshot createSnapshot();
 }
