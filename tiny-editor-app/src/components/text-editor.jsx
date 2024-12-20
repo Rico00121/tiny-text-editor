@@ -74,7 +74,7 @@ export default function TextEditor() {
         setInputText(res.currentBufferContent)
         setOutputText(res.currentBufferContent)
         setClipboardContent(res.clipboard)
-        setHistory(history => [`Text updated: ${new Date().toLocaleTimeString()} \n
+        setHistory(history => [`Engine updated: ${new Date().toLocaleTimeString()}\n
               ${JSON.stringify(res, null, 2)}
             `, ...history])
     }
@@ -172,6 +172,7 @@ export default function TextEditor() {
                                         onPaste={handlePaste}
                                         onKeyDown={handleKeyDown}
                                         variant="outlined"
+                                        placeholder="Enter your text here..."
                                         sx={{
                                             '& .MuiInputBase-input': {
                                                 color: '#00FF00',
