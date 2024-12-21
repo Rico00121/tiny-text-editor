@@ -57,3 +57,11 @@ export async function stopRecord() {
 export async function replayRecord() {
     return sendEvent('replayRecord');
 }
+
+export async function undo() {
+    return sendEvent('undo');
+}
+
+export async function redo() {
+    return sendEvent('redo');
+}

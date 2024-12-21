@@ -16,9 +16,10 @@ import {
     deleteText,
     insertText,
     moveSelection,
-    paste, replayRecord,
+    paste, redo,
+    replayRecord,
     startRecord,
-    stopRecord
+    stopRecord, undo
 } from "../service/editor-service";
 
 // Create a hacker-inspired dark theme
@@ -91,7 +92,7 @@ export default function TextEditor() {
     }
 
     const handleInputChange = (char) => {
-        insertText(char).then(res => {
+        return insertText(char).then(res => {
             updateStatus(res);
         })
     }
@@ -116,18 +117,18 @@ export default function TextEditor() {
 
     const handleStartRecord = () => {
         setIsRecording(true);
-        stopRecord().then(()=> {
+        return stopRecord().then(() => {
             startRecord().then(res => updateStatus(res))
         })
     }
 
     const handleStopRecord = () => {
         setIsRecording(false);
-        stopRecord().then(res => updateStatus(res))
+        return stopRecord().then(res => updateStatus(res))
     }
 
     const handleReplayRecord = () => {
-        stopRecord().then(()=> {
+        return stopRecord().then(() => {
             replayRecord().then(res => updateStatus(res))
         })
 
@@ -135,22 +136,37 @@ export default function TextEditor() {
 
     const handleKeyDown = (e) => {
         console.log(e.key)
-        if ((e.key === 'a' || e.key === 'c' || e.key === 'x' || e.key === 'z' || e.key === 'v')
+        if (e.key === 'z' && (e.metaKey || e.ctrlKey) && (!e.shiftKey)) {
+            return handleUndo();
+        }
+
+        if (e.key === 'z' && (e.metaKey || e.ctrlKey) && (e.shiftKey)) {
+            return handleRedo();
+        }
+
+        if ((e.key === 'a' || e.key === 'c' || e.key === 'x' || e.key === 'v')
             && (e.metaKey || e.ctrlKey || e.shiftKey)) {
             return; // 或者 e.preventDefault();
         }
         const isCharacterKey = e.key.length === 1 && e.key.match(/[a-zA-Z0-9\s.,!?;:'"-]/);
         if (isCharacterKey) {
             // handle normal input behavior
-            handleInputChange(e.key);
+            return handleInputChange(e.key);
         }
 
         if (e.key === 'Backspace' || e.key === 'Delete') {
             console.log('press delete')
-            deleteText().then(res => updateStatus(res))
+            return deleteText().then(res => updateStatus(res))
         }
     };
 
+    const handleUndo = () => {
+        return undo().then(res => updateStatus(res))
+    }
+
+    const handleRedo = () => {
+        return redo().then(res => updateStatus(res))
+    }
     return (
         <ThemeProvider theme={hackerTheme}>
             <CssBaseline/>
@@ -187,9 +203,12 @@ export default function TextEditor() {
                                         Input
                                     </Typography>
                                     <Box sx={{paddingY: 1}}>
-                                        <Button onClick={handleStartRecord} disabled={isRecording}>Start Recording</Button>
-                                        <Button onClick={handleStopRecord} disabled={!isRecording}>Stop Recording</Button>
-                                        <Button onClick={handleReplayRecord} disabled={isRecording}>Play Recording</Button>
+                                        <Button onClick={handleStartRecord} disabled={isRecording}>Start
+                                            Recording</Button>
+                                        <Button onClick={handleStopRecord} disabled={!isRecording}>Stop
+                                            Recording</Button>
+                                        <Button onClick={handleReplayRecord} disabled={isRecording}>Play
+                                            Recording</Button>
                                     </Box>
                                     <TextField
                                         fullWidth
