@@ -156,7 +156,7 @@ class EngineImplTest {
         engine.copySelectedText();
         //content: "hello world", begin:6, end:11, clipboard: "world"
 
-        Assertions.assertEquals("hello", snapshot.getBufferContents().toString());
+        Assertions.assertEquals("hello", snapshot.getBufferContents());
         Assertions.assertEquals(2, snapshot.getBeginIndex());
         Assertions.assertEquals(4, snapshot.getEndIndex());
         Assertions.assertEquals("ll", snapshot.getClipboardContents());
