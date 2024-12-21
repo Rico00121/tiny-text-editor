@@ -10,7 +10,16 @@ import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
 import ListItemText from '@mui/material/ListItemText'
 import {Button, Grid2} from "@mui/material";
-import {copy, cut, deleteText, insertText, moveSelection, paste} from "../service/editor-service";
+import {
+    copy,
+    cut,
+    deleteText,
+    insertText,
+    moveSelection,
+    paste, replayRecord,
+    startRecord,
+    stopRecord
+} from "../service/editor-service";
 
 // Create a hacker-inspired dark theme
 const hackerTheme = createTheme({
@@ -68,15 +77,17 @@ export default function TextEditor() {
     const [outputText, setOutputText] = useState('')
     const [clipboardContent, setClipboardContent] = useState('')
     const [history, setHistory] = useState([])
-
+    const [isRecording, setIsRecording] = useState(false);
 
     function updateStatus(res) {
-        setInputText(res.currentBufferContent)
-        setOutputText(res.currentBufferContent)
-        setClipboardContent(res.clipboard)
-        setHistory(history => [`Engine updated: ${new Date().toLocaleTimeString()}\n
+        if (res) {
+            setInputText(res.currentBufferContent)
+            setOutputText(res.currentBufferContent)
+            setClipboardContent(res.clipboard)
+            setHistory(history => [`Engine updated: ${new Date().toLocaleTimeString()}\n
               ${JSON.stringify(res, null, 2)}
             `, ...history])
+        }
     }
 
     const handleInputChange = (char) => {
@@ -103,9 +114,28 @@ export default function TextEditor() {
         cut().then(res => updateStatus(res))
     }
 
+    const handleStartRecord = () => {
+        setIsRecording(true);
+        stopRecord().then(()=> {
+            startRecord().then(res => updateStatus(res))
+        })
+    }
+
+    const handleStopRecord = () => {
+        setIsRecording(false);
+        stopRecord().then(res => updateStatus(res))
+    }
+
+    const handleReplayRecord = () => {
+        stopRecord().then(()=> {
+            replayRecord().then(res => updateStatus(res))
+        })
+
+    }
+
     const handleKeyDown = (e) => {
         console.log(e.key)
-        if ((e.key === 'a') || e.key === 'c' || e.key === 'x' || e.key === 'z' || e.key === 'v'
+        if ((e.key === 'a' || e.key === 'c' || e.key === 'x' || e.key === 'z' || e.key === 'v')
             && (e.metaKey || e.ctrlKey || e.shiftKey)) {
             return; // 或者 e.preventDefault();
         }
@@ -157,9 +187,9 @@ export default function TextEditor() {
                                         Input
                                     </Typography>
                                     <Box sx={{paddingY: 1}}>
-                                        <Button>Start Recording</Button>
-                                        <Button>Stop Recording</Button>
-                                        <Button>Replay Recording</Button>
+                                        <Button onClick={handleStartRecord} disabled={isRecording}>Start Recording</Button>
+                                        <Button onClick={handleStopRecord} disabled={!isRecording}>Stop Recording</Button>
+                                        <Button onClick={handleReplayRecord} disabled={isRecording}>Play Recording</Button>
                                     </Box>
                                     <TextField
                                         fullWidth
