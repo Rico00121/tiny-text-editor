@@ -112,7 +112,7 @@ public class EngineImpl implements Engine {
      *
      */
     public void restoreFrom(EditorSnapshot memento) {
-        this.buffer.replace(0, this.buffer.length(), memento.getBufferContents().toString());
+        this.buffer.replace(0, this.buffer.length(), memento.getBufferContents());
         this.selection.setBeginIndex(memento.getBeginIndex());
         this.selection.setEndIndex(memento.getEndIndex());
         this.clipboard = memento.getClipboardContents();
@@ -126,7 +126,7 @@ public class EngineImpl implements Engine {
      */
     @Override
     public EditorSnapshot createSnapshot() {
-        return new EditorSnapshot(this.buffer, this.selection.getBeginIndex(), this.selection.getEndIndex(), this.clipboard);
+        return new EditorSnapshot(this.getBufferContents(), this.selection.getBeginIndex(), this.selection.getEndIndex(), this.clipboard);
     }
 }
 

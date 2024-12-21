@@ -5,7 +5,7 @@ package fr.istic.aco.editor.kernel;
  * This class stores a snapshot of the editor's state.
  */
 public class EditorSnapshot {
-    private final StringBuffer bufferContent;
+    private final String bufferContent;
     private final int beginIndex;
     private final int endIndex;
     private final String clipboard;
@@ -18,7 +18,7 @@ public class EditorSnapshot {
      * @param endIndex      The ending index of the selection.
      * @param clipboard     The content of the clipboard.
      */
-    public EditorSnapshot(StringBuffer bufferContent, int beginIndex, int endIndex, String clipboard) {
+    public EditorSnapshot(String bufferContent, int beginIndex, int endIndex, String clipboard) {
         this.bufferContent = bufferContent;
         this.beginIndex = beginIndex;
         this.endIndex = endIndex;
@@ -26,7 +26,7 @@ public class EditorSnapshot {
     }
 
     // Getter methods to retrieve the state
-    public StringBuffer getBufferContents() {
+    public String getBufferContents() {
         return bufferContent;
     }
 
