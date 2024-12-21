@@ -21,6 +21,10 @@ public class UndoManager {
     public UndoManager(Engine engine) {
         this.engine = engine;
         pastStates = new ArrayList<>();
+        pastStates.add(new EditorSnapshot(engine.getBufferContents(),
+                engine.getSelection().getBeginIndex(),
+                engine.getSelection().getEndIndex(),
+                engine.getClipboardContents()));
         futureStates = new ArrayList<>();
         pastCommands = new ArrayList<>();
         futureCommands = new ArrayList<>();
@@ -52,12 +56,11 @@ public class UndoManager {
      * we then adjust the past and future states and commands accordingly
      */
     public void undo() {
-        if (!pastCommands.isEmpty() && !pastStates.isEmpty()) {
+        if (!pastCommands.isEmpty()) {
             //Assign the past state to the current engine
             //if the snapshot was captured at the current stage, we go back to the previous state and recover all the steps from there
             //if the snapshot was captured at the previous stage, we go back to the previous state and recover the last k steps from there
             int loopSize;
-
             //Check if the snapshot was captured at the current stage
             if ((pastCommands.size() % k) == 0) {
                 //Remove the current state and add the current state to the future states
