@@ -32,16 +32,17 @@ public class UndoManager {
     public void storeCommand(CommandOriginator originator) {
         Memento memento = originator.generateMemento();
         pastCommands.add(new Pair<>(originator, memento));
-        int totalSize = this.pastCommands.size(); //+ this.futureCommands.size();
-        if (totalSize == 1 || totalSize % k == 0) {
-            this.storeSnapshot(engine.createSnapshot());
-        }
+        this.storeSnapshot(engine.createSnapshot());
     }
 
     /**
      * This method is used to store the snapshot of the editor upon each operation
      */
     public void storeSnapshot(EditorSnapshot snapshot) {
+        int totalSize = this.pastCommands.size(); //+ this.futureCommands.size();
+        if ( totalSize % k == 0) {
+            this.storeSnapshot(engine.createSnapshot());
+        }
         pastStates.add(snapshot);
     }
 
