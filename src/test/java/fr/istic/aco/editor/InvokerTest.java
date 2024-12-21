@@ -5,6 +5,7 @@ import fr.istic.aco.editor.kernel.EngineImpl;
 import fr.istic.aco.editor.kernel.Recorder;
 import fr.istic.aco.editor.kernel.UndoManager;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import static fr.istic.aco.editor.Configuration.*;
 
@@ -193,42 +194,168 @@ public class InvokerTest {
         Assertions.assertEquals("helloe", engine.getBufferContents());
     }
 
-    @Test
-    void undo() {
-        // insert 6 times
-        prepareHelloData();
-        prepareHelloData();
-        prepareHelloData();
-        prepareHelloData();
-        prepareHelloData();
-        System.out.println(engine.getBufferContents());
-        System.out.println(engine.getSelection().getBeginIndex());
-        System.out.println(engine.getSelection().getEndIndex());
-        System.out.println(engine.getClipboardContents());
+    @Nested
+    class UndoTest {
+        @Test
+        void should_not_undo_when_past_commands_size_is_0() {
 
+            invoker.playCommand(UNDO);
 
-        prepareHelloData();
+            Assertions.assertEquals("", engine.getBufferContents());
+        }
+        @Test
+        void undo_once_when_past_snapshot_size_is_1_and_future_snapshot_size_is_0() {
+            prepareHelloData();
 
-        invoker.playCommand(UNDO);
+            invoker.playCommand(UNDO);
 
-        Assertions.assertEquals("hellohellohellohellohello", engine.getBufferContents());
+            Assertions.assertEquals("", engine.getBufferContents());
+        }
+        @Test
+        void undo_multiple_times_when_past_snapshot_size_is_1_and_future_snapshot_size_is_0() {
+            prepareHelloData();
+            prepareHelloData();
+            prepareHelloData();
+            prepareHelloData();
+
+            invoker.playCommand(UNDO);
+            invoker.playCommand(UNDO);
+            invoker.playCommand(UNDO);
+
+            Assertions.assertEquals("hello", engine.getBufferContents());
+        }
+
+        @Test
+        void undo_once_when_past_snapshot_size_is_2_and_future_snapshot_size_is_0() {
+            // 7 hellos
+            prepareHelloData();
+            prepareHelloData();
+            prepareHelloData();
+            prepareHelloData();
+            prepareHelloData();
+            prepareHelloData();
+            prepareHelloData();
+
+            invoker.playCommand(UNDO);
+
+            Assertions.assertEquals("hellohellohellohellohellohello", engine.getBufferContents());
+        }
+
+        @Test
+        void undo_once_when_past_snapshot_size_is_1_and_future_snapshot_size_is_1() {
+            // 7 hellos
+            prepareHelloData();
+            prepareHelloData();
+            prepareHelloData();
+            prepareHelloData();
+            prepareHelloData();
+            prepareHelloData();
+            prepareHelloData();
+
+            invoker.playCommand(UNDO);
+            invoker.playCommand(UNDO);
+            invoker.playCommand(UNDO);
+
+            Assertions.assertEquals("hellohellohellohello", engine.getBufferContents());
+        }
     }
 
-    @Test
-    void redo() {
-        // insert 6 times
-        prepareHelloData();
-        prepareHelloData();
-        prepareHelloData();
-        prepareHelloData();
-        prepareHelloData();
-        prepareHelloData();
+    @Nested
+    class RedoTest {
+        @Test
+        void should_not_redo_when_future_commands_size_is_0() {
+            invoker.playCommand(REDO);
 
-        invoker.playCommand(UNDO);
-        invoker.playCommand(UNDO);
-        invoker.playCommand(REDO);
+            Assertions.assertEquals("", engine.getBufferContents());
+        }
+        @Test
+        void redo_once_when_past_snapshot_is_1_and_future_snapshot_is_0() {
+            prepareHelloData();
+            invoker.playCommand(UNDO);
 
-        Assertions.assertEquals("hellohellohellohellohello", engine.getBufferContents());
+            invoker.playCommand(REDO);
+
+            Assertions.assertEquals("hellohellohellohellohello", engine.getBufferContents());
+        }
+
+        @Test
+        void redo_multiple_times_when_past_snapshot_size_is_1_and_future_snapshot_size_is_0() {
+            prepareHelloData();
+            prepareHelloData();
+            prepareHelloData();
+            prepareHelloData();
+            invoker.playCommand(UNDO);
+            invoker.playCommand(UNDO);
+            invoker.playCommand(UNDO);
+
+
+            invoker.playCommand(REDO);
+            invoker.playCommand(REDO);
+            invoker.playCommand(REDO);
+
+
+            Assertions.assertEquals("hellohellohellohello", engine.getBufferContents());
+        }
+
+        @Test
+        void redo_multiple_times_when_past_snapshot_size_is_1_and_future_snapshot_size_is_1() {
+            //7 hellos
+            prepareHelloData();
+            prepareHelloData();
+            prepareHelloData();
+            prepareHelloData();
+            prepareHelloData();
+            prepareHelloData();
+            prepareHelloData();
+            invoker.playCommand(UNDO);
+            invoker.playCommand(UNDO);
+            invoker.playCommand(UNDO);
+
+
+            invoker.playCommand(REDO);
+            invoker.playCommand(REDO);
+            invoker.playCommand(REDO);
+
+
+            Assertions.assertEquals("hellohellohellohellohellohellohello", engine.getBufferContents());
+        }
+    }
+
+    @Nested
+    class UndoRedoTest {
+        @Test
+        void undo_redo_when_past_snapshot_size_is_1_and_future_snapshot_size_is_0() {
+            prepareHelloData();
+            prepareHelloData();
+            prepareHelloData();
+
+            invoker.playCommand(UNDO);
+            invoker.playCommand(REDO);
+            invoker.playCommand(UNDO);
+            invoker.playCommand(REDO);
+
+            Assertions.assertEquals("hellohellohello", engine.getBufferContents());
+        }
+
+        @Test
+        void undo_redo_when_past_snapshot_size_is_1_and_future_snapshot_size_is_1() {
+            //7 hellos
+            prepareHelloData();
+            prepareHelloData();
+            prepareHelloData();
+            prepareHelloData();
+            prepareHelloData();
+            prepareHelloData();
+            prepareHelloData();
+            invoker.playCommand(UNDO);
+            invoker.playCommand(UNDO);
+            invoker.playCommand(UNDO);
+
+            invoker.playCommand(UNDO);
+            invoker.playCommand(REDO);
+
+            Assertions.assertEquals("hellohellohellohello", engine.getBufferContents());
+        }
     }
 
     private void prepareHelloData() {
