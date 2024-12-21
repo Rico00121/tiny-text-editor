@@ -214,9 +214,18 @@ public class InvokerTest {
         @Test
         void undo_multiple_times_when_past_snapshot_size_is_1_and_future_snapshot_size_is_0() {
             prepareHelloData();
-            prepareHelloData();
-            prepareHelloData();
-            prepareHelloData();
+//            prepareHelloData();
+//            prepareHelloData();
+//            prepareHelloData();
+            invoker.setText(" pakistan");
+            invoker.playCommand(INSERT);
+
+            invoker.setText(" china");
+            invoker.playCommand(INSERT);
+
+
+            invoker.setText(" india");
+            invoker.playCommand(INSERT);
 
             invoker.playCommand(UNDO);
             invoker.playCommand(UNDO);
@@ -257,6 +266,26 @@ public class InvokerTest {
             invoker.playCommand(UNDO);
 
             Assertions.assertEquals("hellohellohellohello", engine.getBufferContents());
+        }
+
+        @Test
+        void undo_random(){
+            prepareHelloData();
+
+            invoker.setText(" pakistan");
+            invoker.playCommand(INSERT);
+
+            invoker.setText(" china");
+            invoker.playCommand(INSERT);
+
+
+            invoker.setText(" india");
+            invoker.playCommand(INSERT);
+
+            invoker.playCommand(UNDO);
+
+            Assertions.assertEquals("hello pakistan china", engine.getBufferContents());
+
         }
     }
 

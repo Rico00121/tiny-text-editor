@@ -32,7 +32,7 @@ public class UndoManager {
     public void storeCommand(CommandOriginator originator) {
         Memento memento = originator.generateMemento();
         pastCommands.add(new Pair<>(originator, memento));
-        int totalSize = this.pastCommands.size() + this.futureCommands.size();
+        int totalSize = this.pastCommands.size(); //+ this.futureCommands.size();
         if (totalSize == 1 || totalSize % k == 0) {
             this.storeSnapshot(engine.createSnapshot());
         }
@@ -68,22 +68,36 @@ public class UndoManager {
 
                 loopSize = (getEndIndex(pastCommands) % k);
 
-            } else {
-                EditorSnapshot pastState = pastStates.get(getEndIndex(pastStates));
-                engine.restoreFrom(pastState);
-                loopSize = (pastCommands.size() % k);
+            } else if (pastCommands.size() == 1){
+                //Remove the current state and add the current state to the future states
+                futureStates.add(pastStates.remove(getEndIndex(pastStates)));
+
+                //Return empty string, meaning buffer is returned to original state
+                engine.restoreFrom(new EditorSnapshot("", 0,0,""));
+                loopSize = 1;
             }
 
-            for (int i = loopSize; i > 1; i--) {
-                Pair<CommandOriginator, Memento> pair = pastCommands.get(getEndIndex(pastCommands));
+            else {
+                EditorSnapshot pastState = pastStates.get(getEndIndex(pastStates));
+                engine.restoreFrom(pastState);
+                if (pastCommands.size() < k) {
+                    loopSize = pastCommands.size()-1;
+                } else {
+                    loopSize = (pastCommands.size() % k);
+                }
+            }
+
+            for (int i = loopSize; i >1; i--) {
+//                Pair<CommandOriginator, Memento> pair = pastCommands.get(getEndIndex(pastCommands));
+                Pair<CommandOriginator, Memento> pair = pastCommands.get(pastCommands.size()-i);
                 CommandOriginator command = pair.first();
                 Memento memento = pair.second();
                 command.restoreFrom(memento);
                 command.execute();
                 pastCommands.remove(getEndIndex(pastCommands));
             }
-            pastCommands.remove(getEndIndex(pastCommands));
-            futureCommands.add(pastCommands.get(getEndIndex(pastCommands)));
+//            pastCommands.remove(getEndIndex(pastCommands));
+            futureCommands.add(pastCommands.remove(getEndIndex(pastCommands)));
         }
     }
 
