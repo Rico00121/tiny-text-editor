@@ -91,7 +91,6 @@ public class EngineImpl implements Engine {
     /**
      * Removes the contents of the selection in the buffer
      */
-
     @Override
     public void delete() {
         int beginIndex = this.selection.getBeginIndex();
@@ -108,4 +107,26 @@ public class EngineImpl implements Engine {
 
     }
 
+    /**
+     * It recovers editor using the previous snapshot, which is stored in the memento.
+     *
+     */
+    public void restoreFrom(EditorSnapshot memento) {
+        this.buffer.replace(0, this.buffer.length(), memento.getBufferContents());
+        this.selection.setBeginIndex(memento.getBeginIndex());
+        this.selection.setEndIndex(memento.getEndIndex());
+        this.clipboard = memento.getClipboardContents();
+
+    }
+
+    /**
+     * It creates a snapshot of the editor's state.
+     *
+     * @return the memento
+     */
+    @Override
+    public EditorSnapshot createSnapshot() {
+        return new EditorSnapshot(this.getBufferContents(), this.selection.getBeginIndex(), this.selection.getEndIndex(), this.clipboard);
+    }
 }
+

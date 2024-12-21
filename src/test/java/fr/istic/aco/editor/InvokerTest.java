@@ -3,6 +3,7 @@ package fr.istic.aco.editor;
 import fr.istic.aco.editor.kernel.Engine;
 import fr.istic.aco.editor.kernel.EngineImpl;
 import fr.istic.aco.editor.kernel.Recorder;
+import fr.istic.aco.editor.kernel.UndoManager;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import static fr.istic.aco.editor.Configuration.*;
@@ -16,7 +17,8 @@ public class InvokerTest {
     void setUp() {
         this.engine = new EngineImpl();
         Recorder recorder = new Recorder();
-        this.invoker = new Configuration().invoker(engine, recorder);
+        UndoManager undoManager = new UndoManager(engine);
+        this.invoker = new Configuration().invoker(engine, recorder, undoManager);
     }
 
     @Test
@@ -189,6 +191,44 @@ public class InvokerTest {
         this.invoker.playCommand(REPLAY_RECORD);
 
         Assertions.assertEquals("helloe", engine.getBufferContents());
+    }
+
+    @Test
+    void undo() {
+        // insert 6 times
+        prepareHelloData();
+        prepareHelloData();
+        prepareHelloData();
+        prepareHelloData();
+        prepareHelloData();
+        System.out.println(engine.getBufferContents());
+        System.out.println(engine.getSelection().getBeginIndex());
+        System.out.println(engine.getSelection().getEndIndex());
+        System.out.println(engine.getClipboardContents());
+
+
+        prepareHelloData();
+
+        invoker.playCommand(UNDO);
+
+        Assertions.assertEquals("hellohellohellohellohello", engine.getBufferContents());
+    }
+
+    @Test
+    void redo() {
+        // insert 6 times
+        prepareHelloData();
+        prepareHelloData();
+        prepareHelloData();
+        prepareHelloData();
+        prepareHelloData();
+        prepareHelloData();
+
+        invoker.playCommand(UNDO);
+        invoker.playCommand(UNDO);
+        invoker.playCommand(REDO);
+
+        Assertions.assertEquals("hellohellohellohellohello", engine.getBufferContents());
     }
 
     private void prepareHelloData() {

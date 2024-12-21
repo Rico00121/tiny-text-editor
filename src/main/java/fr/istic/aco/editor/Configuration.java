@@ -4,6 +4,7 @@ import fr.istic.aco.editor.commands.*;
 import fr.istic.aco.editor.kernel.Engine;
 import fr.istic.aco.editor.kernel.EngineImpl;
 import fr.istic.aco.editor.kernel.Recorder;
+import fr.istic.aco.editor.kernel.UndoManager;
 import org.springframework.context.annotation.Bean;
 
 @org.springframework.context.annotation.Configuration
@@ -23,6 +24,10 @@ public class Configuration {
     public static final String STOP_RECORD = "stopRecord";
 
     public static final String REPLAY_RECORD = "replayRecord";
+
+    public static final String UNDO = "undo";
+    public static final String REDO = "redo";
+
     @Bean
     public Engine engine() {
         return new EngineImpl();
@@ -34,10 +39,17 @@ public class Configuration {
     }
 
     @Bean
-    public Invoker invoker(Engine engine, Recorder recorder) {
+    public UndoManager undoManager(Engine engine) {
+        return new UndoManager(engine);
+    }
+
+
+
+    @Bean
+    public Invoker invoker(Engine engine, Recorder recorder, UndoManager undoManager) {
         Invoker invoker = new Invoker();
-        invoker.addCommand(INSERT, new Insert(engine, invoker, recorder));
-        invoker.addCommand(MOVE_SELECTION, new MoveSelection(engine, invoker, recorder));
+        invoker.addCommand(INSERT, new Insert(engine, invoker, recorder, undoManager));
+        invoker.addCommand(MOVE_SELECTION, new MoveSelection(engine, invoker, recorder, undoManager));
         invoker.addCommand(COPY, new Copy(engine, recorder));
         invoker.addCommand(CUT, new Cut(engine, recorder));
         invoker.addCommand(DELETE, new Delete(engine, recorder));
@@ -45,6 +57,9 @@ public class Configuration {
         invoker.addCommand(START_RECORD, new Start(recorder));
         invoker.addCommand(STOP_RECORD, new Stop(recorder));
         invoker.addCommand(REPLAY_RECORD, new Replay(recorder));
+        invoker.addCommand(UNDO,new Undo(undoManager));
+        invoker.addCommand(REDO, new Redo(undoManager));
+
         return invoker;
     }
 
