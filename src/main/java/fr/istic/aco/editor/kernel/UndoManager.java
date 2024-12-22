@@ -94,7 +94,7 @@ public class UndoManager {
     private void moveLastFutureToPastOrNot() {
         int totalSize = this.pastCommands.size();
         if ( totalSize % k == 0) {
-            pastStates.add(futureStates.remove(getEndIndex(pastStates)));
+            pastStates.add(futureStates.remove(getEndIndex(futureStates)));
         }
     }
 
