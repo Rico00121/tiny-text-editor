@@ -13,7 +13,7 @@ public class Recorder {
     }
 
     private boolean isReplaying;
-    public boolean isRecording;
+    private boolean isRecording;
 
     public Recorder() {
         this.actions = new ArrayList<>();
