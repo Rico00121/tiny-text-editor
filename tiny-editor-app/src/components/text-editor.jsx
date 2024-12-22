@@ -1,5 +1,5 @@
 import React, {useState} from 'react'
-import {alpha, createTheme, ThemeProvider} from '@mui/material/styles'
+import {alpha, ThemeProvider} from '@mui/material/styles'
 import CssBaseline from '@mui/material/CssBaseline'
 import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
@@ -9,7 +9,7 @@ import TextField from '@mui/material/TextField'
 import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
 import ListItemText from '@mui/material/ListItemText'
-import {Button, Grid2} from "@mui/material";
+import {Button, Divider, Grid2} from "@mui/material";
 import {
     copy,
     cut,
@@ -21,57 +21,7 @@ import {
     startRecord,
     stopRecord, undo
 } from "../service/editor-service";
-
-// Create a hacker-inspired dark theme
-const hackerTheme = createTheme({
-    palette: {
-        mode: 'dark',
-        primary: {
-            main: '#00FF00',
-        },
-        background: {
-            default: '#000000',
-            paper: '#0A0A0A',
-        },
-        text: {
-            primary: '#00FF00',
-            secondary: '#008F00',
-        },
-    },
-    typography: {
-        fontFamily: '"Fira Code", "Roboto Mono", monospace',
-    },
-    components: {
-        MuiPaper: {
-            styleOverrides: {
-                root: {
-                    backgroundImage: 'none',
-                    backgroundColor: alpha('#0A0A0A', 0.8),
-                    backdropFilter: 'blur(10px)',
-                    border: '1px solid #00FF00',
-                    boxShadow: '0 0 10px rgba(0, 255, 0, 0.1)',
-                },
-            },
-        },
-        MuiTextField: {
-            styleOverrides: {
-                root: {
-                    '& .MuiOutlinedInput-root': {
-                        '& fieldset': {
-                            borderColor: 'rgba(0, 255, 0, 0.5)',
-                        },
-                        '&:hover fieldset': {
-                            borderColor: 'rgba(0, 255, 0, 0.7)',
-                        },
-                        '&.Mui-focused fieldset': {
-                            borderColor: '#00FF00',
-                        },
-                    },
-                },
-            },
-        },
-    },
-})
+import {hackerTheme} from "../theme";
 
 export default function TextEditor() {
     const [inputText, setInputText] = useState('')
@@ -79,11 +29,39 @@ export default function TextEditor() {
     const [clipboardContent, setClipboardContent] = useState('')
     const [history, setHistory] = useState([])
     const [isRecording, setIsRecording] = useState(false);
-    const [isInputTriggered, setIsInputTriggered] = useState(false);
+
+    const [beginIndex, setBeginIndex] = useState('');
+    const [endIndex, setEndIndex] = useState('');
+    const [beginIndexError, setBeginIndexError] = useState(false);
+    const [endIndexError, setEndIndexError] = useState(false);
+
+    const [currentBeginIndex, setCurrentBeginIndex] = useState(0);
+    const [currentEndIndex, setCurrentEndIndex] = useState(0);
+
+    const handleBeginIndexChange = (e) => {
+        const value = e.target.value;
+        if (value === '' || (parseInt(value) >= 0 && (endIndex === '' || parseInt(value) <= parseInt(endIndex)))) {
+            setBeginIndex(value);
+            setBeginIndexError(false);
+        } else {
+            setBeginIndexError(true);
+        }
+    };
+
+    const handleEndIndexChange = (e) => {
+        const value = e.target.value;
+        if (value === '' || (parseInt(value) >= 0 && (beginIndex === '' || parseInt(value) >= parseInt(beginIndex)))) {
+            setEndIndex(value);
+            setEndIndexError(false);
+        } else {
+            setEndIndexError(true);
+        }
+    };
     function updateStatus(res) {
         if (res) {
-            setInputText(res.currentBufferContent)
             setOutputText(res.currentBufferContent)
+            setCurrentBeginIndex(res.selected.beginIndex)
+            setCurrentEndIndex(res.selected.endIndex)
             setClipboardContent(res.clipboard)
             setHistory(history => [`Engine updated: ${new Date().toLocaleTimeString()}\n
               ${JSON.stringify(res, null, 2)}
@@ -91,23 +69,34 @@ export default function TextEditor() {
         }
     }
 
-    const handleInputChange = (char) => {
-        setIsInputTriggered(true)
-        return insertText(char).then(res => {
+    const handleRefresh = () => {
+        return moveSelection(outputText.length,outputText.length).then(res => updateStatus(res))
+    }
+
+    const handleInsert = () => {
+        return insertText(inputText).then(res => {
             updateStatus(res);
         })
     }
 
-    const handleSelectChange = (e) => {
-        if (isInputTriggered) {
-            setIsInputTriggered(false);
-            return;
-        }
-        return moveSelection(e.target.selectionStart, e.target.selectionEnd).then(res => updateStatus(res)).then(
-            () => console.log('now selected:' + e.target.selectionStart + ',' + e.target.selectionEnd)
-        )
+    const handleDelete = () => {
+        return deleteText().then(res => updateStatus(res))
     }
 
+    const handleMoveSelection = () => {
+        if (beginIndex === '' || endIndex === '') {
+            setBeginIndexError(true);
+            setEndIndexError(true);
+            return;
+        }
+        if (beginIndex > outputText.length || endIndex > outputText.length) {
+            alert('Index exceeds the length of the current text')
+            return;
+        }
+        return moveSelection(beginIndex, endIndex).then(res => updateStatus(res)).then(
+            () => console.log('now selected:' + beginIndex + ',' + endIndex)
+        )
+    }
     const handleCopy = () => {
         copy().then(res => updateStatus(res))
     }
@@ -139,31 +128,6 @@ export default function TextEditor() {
 
     }
 
-    const handleKeyDown = (e) => {
-        console.log(e.key)
-        if (e.key === 'z' && (e.metaKey || e.ctrlKey) && (!e.shiftKey)) {
-            return handleUndo();
-        }
-
-        if (e.key === 'z' && (e.metaKey || e.ctrlKey) && (e.shiftKey)) {
-            return handleRedo();
-        }
-
-        if ((e.key === 'a' || e.key === 'c' || e.key === 'x' || e.key === 'v')
-            && (e.metaKey || e.ctrlKey || e.shiftKey)) {
-            return; // 或者 e.preventDefault();
-        }
-        const isCharacterKey = e.key.length === 1 && e.key.match(/[a-zA-Z0-9\s.,!?;:'"-]/);
-        if (isCharacterKey) {
-            // handle normal input behavior
-            return handleInputChange(e.key);
-        }
-
-        if (e.key === 'Backspace' || e.key === 'Delete') {
-            console.log('press delete')
-            return deleteText().then(res => updateStatus(res))
-        }
-    };
 
     const handleUndo = () => {
         return undo().then(res => updateStatus(res))
@@ -205,9 +169,9 @@ export default function TextEditor() {
                             <Grid2 item size={12}>
                                 <Paper elevation={3} sx={{p: 2}}>
                                     <Typography variant="h5" gutterBottom sx={{color: '#00FF00'}}>
-                                        Input
+                                        Console
                                     </Typography>
-                                    <Box sx={{paddingY: 1}}>
+                                    <Box sx={{gap: 2}}>
                                         <Button onClick={handleStartRecord} disabled={isRecording}>Start
                                             Recording</Button>
                                         <Button onClick={handleStopRecord} disabled={!isRecording}>Stop
@@ -215,28 +179,60 @@ export default function TextEditor() {
                                         <Button onClick={handleReplayRecord} disabled={isRecording}>Play
                                             Recording</Button>
                                     </Box>
-                                    <TextField
-                                        fullWidth
-                                        multiline
-                                        rows={5}
-                                        value={inputText}
-                                        onSelect={handleSelectChange}
-                                        onCopy={handleCopy}
-                                        onCut={handleCut}
-                                        onPaste={handlePaste}
-                                        onKeyDown={handleKeyDown}
-                                        variant="outlined"
-                                        placeholder="Enter your text here..."
-                                        sx={{
-                                            '& .MuiInputBase-input': {
-                                                color: '#00FF00',
-                                                fontFamily: '"Fira Code", "Roboto Mono", monospace',
-                                            },
-                                            '& .MuiOutlinedInput-root': {
-                                                backgroundColor: 'rgba(0, 20, 0, 0.3)',
-                                            },
-                                        }}
-                                    />
+                                    <Box sx={{ paddingY: 1 }}> {/* 调整数值以适应你的需求 */}
+                                        <Divider sx={{ borderColor: hackerTheme.palette.text.secondary }} />
+                                    </Box>
+                                    <Box>
+                                        <Button onClick={handleDelete}>Delete</Button>
+                                        <Button onClick={handleCut} >Cut</Button>
+                                        <Button onClick={handleCopy} >Copy</Button>
+                                        <Button onClick={handlePaste} >Paste</Button>
+                                        <Button onClick={handleUndo} >Undo</Button>
+                                        <Button onClick={handleRedo} >Redo</Button>
+                                    </Box>
+                                    <Box display="flex" sx={{ gap: 2, alignItems: 'center'}}>
+                                        <TextField
+                                            label="Begin Index"
+                                            type="number"
+                                            value={beginIndex}
+                                            onChange={handleBeginIndexChange}
+                                            variant="outlined"
+                                            margin="normal"
+                                            error={beginIndexError}
+                                            sx = {{flex: 1, height: '56px'}}
+                                        />
+                                        <TextField
+                                            label="End Index"
+                                            type="number"
+                                            value={endIndex}
+                                            onChange={handleEndIndexChange}
+                                            variant="outlined"
+                                            margin="normal"
+                                            error={endIndexError}
+                                            sx = {{flex: 1, height: '56px'}}
+                                        />
+                                        <Button sx = {{height: '56px'}} onClick={handleMoveSelection}>Move Selection</Button>
+                                    </Box>
+                                    <Box display="flex">
+                                        <TextField
+                                            value={inputText}
+                                            onChange={(e) => setInputText(e.target.value)}
+                                            placeholder="Enter your text here..."
+                                            variant="outlined"
+                                            sx={{
+                                                '& .MuiInputBase-input': {
+                                                    color: '#00FF00',
+                                                    fontFamily: '"Fira Code", "Roboto Mono", monospace',
+                                                },
+                                                '& .MuiOutlinedInput-root': {
+                                                    backgroundColor: 'rgba(0, 20, 0, 0.3)',
+                                                },
+                                                flex: 1,
+                                                mr: 2,
+                                            }}
+                                        />
+                                        <Button onClick={handleInsert}>Insert</Button>
+                                    </Box>
                                 </Paper>
                             </Grid2>
                             <Grid2 item size={12}>
@@ -244,6 +240,19 @@ export default function TextEditor() {
                                     <Typography variant="h5" gutterBottom sx={{color: '#00FF00'}}>
                                         Editor State
                                     </Typography>
+                                    <Box sx={{ display: 'flex', gap: 2, mb: 2, alignItems: 'center', justifyContent: 'space-between' }}>
+                                        <Box sx={{display: 'flex', gap: 2}}>
+                                            <Box>
+                                                Begin Index: {currentBeginIndex.toString() || ''}
+                                            </Box>
+                                            <Box>
+                                                End Index: {currentEndIndex.toString() || ''}
+                                            </Box>
+                                        </Box>
+                                        <Box>
+                                            <Button onClick={handleRefresh}>Refresh</Button>
+                                        </Box>
+                                    </Box>
                                     <Box sx={{flex: 1, display: 'flex', flexDirection: 'column', gap: 2}}>
                                         <Paper
                                             variant="outlined"
@@ -283,13 +292,12 @@ export default function TextEditor() {
                                             </Typography>
                                             {clipboardContent || 'Empty'}
                                         </Paper>
-
                                     </Box>
                                 </Paper>
                             </Grid2>
                         </Grid2>
                         <Grid2 item size={6}>
-                            <Paper elevation={3} sx={{height: '600px', display: 'flex', flexDirection: 'column', p: 2}}>
+                            <Paper elevation={3} sx={{height: '632px', display: 'flex', flexDirection: 'column', p: 2}}>
                                 <Typography variant="h5" gutterBottom sx={{color: '#00FF00'}}>
                                     Editor History
                                 </Typography>
