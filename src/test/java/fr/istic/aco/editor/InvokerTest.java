@@ -357,6 +357,21 @@ public class InvokerTest {
 
             Assertions.assertEquals("hello pakistan china india", engine.getBufferContents());
         }
+
+        @Test
+        void should_cannot_redo_when_happen_any_operation_during_redo_undo_processing() {
+            prepareHelloData();
+            prepareCustomizedData(" pakistan");
+            prepareCustomizedData(" china");
+
+            invoker.playCommand(UNDO);
+            // hello pakistan
+            prepareCustomizedData(" india");
+            // hello pakistan india
+            invoker.playCommand(REDO); // should happen nothing
+
+            Assertions.assertEquals("hello pakistan india", engine.getBufferContents());
+        }
     }
 
     private void prepareCustomizedData(String text) {
