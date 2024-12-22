@@ -5,7 +5,7 @@ It is built in a modular way. The frontend handles user interaction and communic
 
 This section explains the overall architectural structure of the application, explaining the key components, their interactions, and the design pattern implementations used to ensure maintainability, scalability, and performance.
 
-Click here to go back to the [README](./README.md).
+Click here to go back to the [README](../README.md).
 
 ## **Table of Contents**
 
