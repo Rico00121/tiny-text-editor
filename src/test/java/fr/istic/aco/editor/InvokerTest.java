@@ -97,101 +97,104 @@ public class InvokerTest {
         Assertions.assertEquals("hello", engine.getBufferContents());
     }
 
-    @Test
-    void replay_insert() {
-        prepareHelloData();
-        this.invoker.playCommand(START_RECORD);
+    @Nested
+    class ReplayTest {
+        @Test
+        void replay_insert() {
+            prepareHelloData();
+            invoker.playCommand(START_RECORD);
 
-        this.invoker.setText(" world");
-        this.invoker.playCommand(INSERT);
+            invoker.setText(" world");
+            invoker.playCommand(INSERT);
 
-        this.invoker.playCommand(STOP_RECORD);
-        this.invoker.playCommand(REPLAY_RECORD);
+            invoker.playCommand(STOP_RECORD);
+            invoker.playCommand(REPLAY_RECORD);
 
-        Assertions.assertEquals("hello world world", this.engine.getBufferContents());
-    }
+            Assertions.assertEquals("hello world world", engine.getBufferContents());
+        }
 
-    @Test
-    void replay_selection() {
-        prepareHelloData();
-        //start record
-        this.invoker.playCommand(START_RECORD);
+        @Test
+        void replay_selection() {
+            prepareHelloData();
+            //start record
+            invoker.playCommand(START_RECORD);
 
-        invoker.setSelection(1, 2);
-        invoker.playCommand(MOVE_SELECTION);
-        //stop record
-        this.invoker.playCommand(STOP_RECORD);
+            invoker.setSelection(1, 2);
+            invoker.playCommand(MOVE_SELECTION);
+            //stop record
+            invoker.playCommand(STOP_RECORD);
 
-        this.invoker.setText(" world");
-        this.invoker.playCommand(INSERT);
-        //engine content: "hello world"
-        this.invoker.playCommand(REPLAY_RECORD);
+            invoker.setText(" world");
+            invoker.playCommand(INSERT);
+            //engine content: "hello world"
+            invoker.playCommand(REPLAY_RECORD);
 
-        Assertions.assertEquals(1, engine.getSelection().getBeginIndex());
-        Assertions.assertEquals(2, engine.getSelection().getEndIndex());
-    }
+            Assertions.assertEquals(1, engine.getSelection().getBeginIndex());
+            Assertions.assertEquals(2, engine.getSelection().getEndIndex());
+        }
 
-    @Test
-    void replay_copy() {
-        prepareHelloData();
-        this.invoker.playCommand(START_RECORD);
-        invoker.playCommand(COPY);
-        this.invoker.playCommand(STOP_RECORD);
+        @Test
+        void replay_copy() {
+            prepareHelloData();
+            invoker.playCommand(START_RECORD);
+            invoker.playCommand(COPY);
+            invoker.playCommand(STOP_RECORD);
 
-        this.invoker.setSelection(1,2);
-        this.invoker.playCommand(MOVE_SELECTION);
-        this.invoker.playCommand(REPLAY_RECORD);
+            invoker.setSelection(1,2);
+            invoker.playCommand(MOVE_SELECTION);
+            invoker.playCommand(REPLAY_RECORD);
 
-        Assertions.assertEquals("e", engine.getClipboardContents());
-    }
+            Assertions.assertEquals("e", engine.getClipboardContents());
+        }
 
-    @Test
-    void replay_cut() {
-        prepareHelloData();
-        // hello
-        this.invoker.playCommand(START_RECORD);
-        invoker.playCommand(CUT);
-        this.invoker.playCommand(STOP_RECORD);
+        @Test
+        void replay_cut() {
+            prepareHelloData();
+            // hello
+            invoker.playCommand(START_RECORD);
+            invoker.playCommand(CUT);
+            invoker.playCommand(STOP_RECORD);
 
-        this.invoker.setSelection(1,2);
-        this.invoker.playCommand(MOVE_SELECTION);
+            invoker.setSelection(1,2);
+            invoker.playCommand(MOVE_SELECTION);
 
-        this.invoker.playCommand(REPLAY_RECORD);
+            invoker.playCommand(REPLAY_RECORD);
+            Assertions.assertEquals("e", engine.getClipboardContents());
+            Assertions.assertEquals("hllo", engine.getBufferContents());
+        }
 
-        Assertions.assertEquals("e", engine.getClipboardContents());
-        Assertions.assertEquals("hllo", engine.getBufferContents());
-    }
+        @Test
+        void replay_delete() {
+            prepareHelloData();
+            invoker.playCommand(START_RECORD);
+            invoker.playCommand(DELETE);
+            // now is hell
+            invoker.playCommand(STOP_RECORD);
 
-    @Test
-    void replay_delete() {
-        prepareHelloData();
-        this.invoker.playCommand(START_RECORD);
-        invoker.playCommand(DELETE);
-        // now is hell
-        this.invoker.playCommand(STOP_RECORD);
+            invoker.playCommand(REPLAY_RECORD);
 
-        this.invoker.playCommand(REPLAY_RECORD);
+            Assertions.assertEquals("hel", engine.getBufferContents());
+        }
 
-        Assertions.assertEquals("hel", engine.getBufferContents());
-    }
+        @Test
+        void replay_paste() {
+            prepareHelloData();
+            invoker.setSelection(1, 2);
+            invoker.playCommand(MOVE_SELECTION);
+            invoker.playCommand(COPY);
 
-    @Test
-    void replay_paste() {
-        prepareHelloData();
-        this.invoker.setSelection(1, 2);
-        this.invoker.playCommand(MOVE_SELECTION);
-        this.invoker.playCommand(COPY);
+            invoker.playCommand(START_RECORD);
+            invoker.playCommand(PASTE);
+            invoker.playCommand(STOP_RECORD);
 
-        this.invoker.playCommand(START_RECORD);
-        invoker.playCommand(PASTE);
-        this.invoker.playCommand(STOP_RECORD);
+            invoker.setSelection(5, 5);
+            invoker.playCommand(MOVE_SELECTION);
 
-        this.invoker.setSelection(5, 5);
-        this.invoker.playCommand(MOVE_SELECTION);
+            invoker.playCommand(REPLAY_RECORD);
 
-        this.invoker.playCommand(REPLAY_RECORD);
+            Assertions.assertEquals("helloe", engine.getBufferContents());
+        }
 
-        Assertions.assertEquals("helloe", engine.getBufferContents());
     }
 
     @Nested
