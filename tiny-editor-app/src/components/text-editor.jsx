@@ -79,7 +79,7 @@ export default function TextEditor() {
     const [clipboardContent, setClipboardContent] = useState('')
     const [history, setHistory] = useState([])
     const [isRecording, setIsRecording] = useState(false);
-
+    const [isInputTriggered, setIsInputTriggered] = useState(false);
     function updateStatus(res) {
         if (res) {
             setInputText(res.currentBufferContent)
@@ -92,13 +92,18 @@ export default function TextEditor() {
     }
 
     const handleInputChange = (char) => {
+        setIsInputTriggered(true)
         return insertText(char).then(res => {
             updateStatus(res);
         })
     }
 
     const handleSelectChange = (e) => {
-        moveSelection(e.target.selectionStart, e.target.selectionEnd).then(res => updateStatus(res)).then(
+        if (isInputTriggered) {
+            setIsInputTriggered(false);
+            return;
+        }
+        return moveSelection(e.target.selectionStart, e.target.selectionEnd).then(res => updateStatus(res)).then(
             () => console.log('now selected:' + e.target.selectionStart + ',' + e.target.selectionEnd)
         )
     }
