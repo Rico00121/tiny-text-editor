@@ -4,6 +4,7 @@ import fr.istic.aco.editor.Invoker;
 import fr.istic.aco.editor.kernel.Engine;
 import fr.istic.aco.editor.kernel.Recorder;
 import fr.istic.aco.editor.kernel.SelectionImpl;
+import fr.istic.aco.editor.kernel.UndoManager;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,6 +23,9 @@ class EditorControllerTest {
 
     @MockBean
     private Invoker invoker;
+
+    @MockBean
+    private UndoManager undoManager;
 
     @MockBean
     private Recorder recorder;

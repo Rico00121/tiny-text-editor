@@ -14,14 +14,14 @@ public class UndoManager {
     private final List<Pair<CommandOriginator, Memento>> futureCommands;
     int k = 5; //we store a snapshot after every k commands
     private final Engine engine;
-
+    private boolean isUndoRedo;
     /**
      * constructor for UndoManager
      */
     public UndoManager(Engine engine) {
         this.engine = engine;
         pastStates = new ArrayList<>();
-        pastStates.add(new EditorSnapshot(engine.getBufferContents(),
+        pastStates.add(new EditorSnapshot(this.engine.getBufferContents(),
                 engine.getSelection().getBeginIndex(),
                 engine.getSelection().getEndIndex(),
                 engine.getClipboardContents()));
@@ -34,20 +34,35 @@ public class UndoManager {
      * This method is used to store the commands upon each operation
      */
     public void storeCommand(CommandOriginator originator) {
-        Memento memento = originator.generateMemento();
-        pastCommands.add(new Pair<>(originator, memento));
-        this.storeSnapshot(engine.createSnapshot());
+        if (!isUndoRedo) {
+            clearFuture();
+            Memento memento = originator.generateMemento();
+            pastCommands.add(new Pair<>(originator, memento));
+            this.storeSnapshotOrNot();
+        }
+    }
+
+    private void clearFuture() {
+        futureCommands.clear();
+        futureStates.clear();
     }
 
     /**
-     * This method is used to store the snapshot of the editor upon each operation
+     * This method is used to store the snapshot of the editor upon each k operations
      */
-    public void storeSnapshot(EditorSnapshot snapshot) {
-        int totalSize = this.pastCommands.size(); //+ this.futureCommands.size();
+    private void storeSnapshotOrNot() {
+        int totalSize = this.pastCommands.size();
         if ( totalSize % k == 0) {
-            this.storeSnapshot(engine.createSnapshot());
+            pastStates.add(engine.createSnapshot());
         }
-        pastStates.add(snapshot);
+    }
+
+    private void backToPreviousState() {
+        int totalSize = this.pastCommands.size();
+        if ( totalSize % k == 0) {
+            futureStates.add(pastStates.remove(getEndIndex(pastStates)));
+        }
+        engine.restoreFrom(pastStates.get(getEndIndex(pastStates)));
     }
 
     /**
@@ -56,73 +71,50 @@ public class UndoManager {
      * we then adjust the past and future states and commands accordingly
      */
     public void undo() {
+        isUndoRedo = true;
         if (!pastCommands.isEmpty()) {
-            //Assign the past state to the current engine
-            //if the snapshot was captured at the current stage, we go back to the previous state and recover all the steps from there
-            //if the snapshot was captured at the previous stage, we go back to the previous state and recover the last k steps from there
-            int loopSize;
-            //Check if the snapshot was captured at the current stage
-            if ((pastCommands.size() % k) == 0) {
-                //Remove the current state and add the current state to the future states
-                futureStates.add(pastStates.remove(getEndIndex(pastStates)));
+            backToPreviousState();
 
-                //Assign the past state to the current engine
-                EditorSnapshot pastState = pastStates.get(getEndIndex(pastStates));
-                engine.restoreFrom(pastState);
-
-                loopSize = (getEndIndex(pastCommands) % k);
-
-            } else if (pastCommands.size() == 1){
-                //Remove the current state and add the current state to the future states
-                futureStates.add(pastStates.remove(getEndIndex(pastStates)));
-
-                //Return empty string, meaning buffer is returned to original state
-                engine.restoreFrom(new EditorSnapshot("", 0,0,""));
-                loopSize = 1;
-            }
-
-            else {
-                EditorSnapshot pastState = pastStates.get(getEndIndex(pastStates));
-                engine.restoreFrom(pastState);
-                if (pastCommands.size() < k) {
-                    loopSize = pastCommands.size()-1;
-                } else {
-                    loopSize = (pastCommands.size() % k);
-                }
-            }
-
-            for (int i = loopSize; i >1; i--) {
-//                Pair<CommandOriginator, Memento> pair = pastCommands.get(getEndIndex(pastCommands));
-                Pair<CommandOriginator, Memento> pair = pastCommands.get(pastCommands.size()-i);
-                CommandOriginator command = pair.first();
-                Memento memento = pair.second();
+            futureCommands.add(pastCommands.remove(getEndIndex(pastCommands)));
+            for (int i = (pastStates.size() - 1) * k; i <pastCommands.size(); i++) {
+                Pair<CommandOriginator, Memento> currentPair = pastCommands.get(i);
+                CommandOriginator command = currentPair.first();
+                Memento memento = currentPair.second();
                 command.restoreFrom(memento);
                 command.execute();
-                pastCommands.remove(getEndIndex(pastCommands));
             }
-//            pastCommands.remove(getEndIndex(pastCommands));
-            futureCommands.add(pastCommands.remove(getEndIndex(pastCommands)));
         }
+        isUndoRedo = false;
     }
 
     private int getEndIndex(List<?> list) {
         return list.size() - 1;
     }
 
-    public void redo() {
-        if (!futureCommands.isEmpty() && !futureStates.isEmpty()) {
-            //Execute the first command in the future commands
-            Pair<CommandOriginator, Memento> pair = futureCommands.get(0);
-            CommandOriginator command = pair.first();
-            Memento memento = pair.second();
-            command.restoreFrom(memento);
-            command.execute();
-            //Add the command to the past commands
-            pastCommands.add(futureCommands.get(0));
-            //Remove the command from the future commands
-            futureCommands.remove(0);
+    private void moveLastFutureToPastOrNot() {
+        int totalSize = this.pastCommands.size();
+        if ( totalSize % k == 0) {
+            pastStates.add(futureStates.remove(getEndIndex(pastStates)));
         }
     }
+
+    public void redo() {
+        isUndoRedo = true;
+        if (!futureCommands.isEmpty()) {
+            Pair<CommandOriginator, Memento> currentPair = futureCommands.remove(getEndIndex(futureCommands));
+            pastCommands.add(currentPair);
+            moveLastFutureToPastOrNot();
+
+            CommandOriginator command = currentPair.first();
+            Memento memento = currentPair.second();
+
+            command.restoreFrom(memento);
+            command.execute();
+        }
+        isUndoRedo = false;
+    }
+
+
 }
 
 

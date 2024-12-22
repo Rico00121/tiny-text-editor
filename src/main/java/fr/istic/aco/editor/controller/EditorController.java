@@ -3,7 +3,6 @@ package fr.istic.aco.editor.controller;
 import fr.istic.aco.editor.Invoker;
 import fr.istic.aco.editor.kernel.Engine;
 import fr.istic.aco.editor.kernel.Recorder;
-import fr.istic.aco.editor.kernel.UndoManager;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,13 +18,11 @@ public class EditorController {
     private final Engine engine;
     private final Invoker invoker;
     private final Recorder recorder;
-    private final UndoManager undoManager;
 
-    public EditorController(Engine engine, Invoker invoker, Recorder recorder, UndoManager undoManager) {
+    public EditorController(Engine engine, Invoker invoker, Recorder recorder) {
         this.engine = engine;
         this.invoker = invoker;
         this.recorder = recorder;
-        this.undoManager = undoManager;
     }
 
     @PostMapping("/event")
