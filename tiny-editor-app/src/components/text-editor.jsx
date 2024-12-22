@@ -43,6 +43,9 @@ export default function TextEditor() {
         if (value === '' || (parseInt(value) >= 0 && (endIndex === '' || parseInt(value) <= parseInt(endIndex)))) {
             setBeginIndex(value);
             setBeginIndexError(false);
+            if (endIndex === '') {
+                setEndIndex(value);
+            }
         } else {
             setBeginIndexError(true);
         }
