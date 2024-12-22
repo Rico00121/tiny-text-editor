@@ -1,0 +1,128 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Selection</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">fr.istic.aco.editor.kernel</a>
+</div>
+
+<h1>Coverage Summary for Class: Selection (fr.istic.aco.editor.kernel)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">Selection</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package fr.istic.aco.editor.kernel;
+&nbsp;
+&nbsp;/**
+&nbsp; * Provides access to selection control operations
+&nbsp; *
+&nbsp; * @author plouzeau
+&nbsp; * @version 1.0
+&nbsp; */
+&nbsp;public interface Selection {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Provides the index of the first character designated
+&nbsp;     * by the selection.
+&nbsp;     *
+&nbsp;     * @return
+&nbsp;     */
+&nbsp;    int getBeginIndex();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Provides the index of the first character
+&nbsp;     * after the last character designated
+&nbsp;     * by the selection.
+&nbsp;     *
+&nbsp;     * @return the end index
+&nbsp;     */
+&nbsp;    int getEndIndex();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Provides the index of the first character in the buffer
+&nbsp;     *
+&nbsp;     * @return the buffer&#39;s begin index
+&nbsp;     */
+&nbsp;    int getBufferBeginIndex();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Provides the index of the first &quot;virtual&quot; character
+&nbsp;     * after the end of the buffer
+&nbsp;     *
+&nbsp;     * @return the post end buffer index
+&nbsp;     */
+&nbsp;    int getBufferEndIndex();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Changes the value of the begin index of the selection
+&nbsp;     *
+&nbsp;     * @param beginIndex, must be within the buffer index range
+&nbsp;     * @throws IndexOutOfBoundsException if the beginIndex is out of bounds
+&nbsp;     */
+&nbsp;    void setBeginIndex(int beginIndex);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Changes the value of the end index of the selection
+&nbsp;     *
+&nbsp;     * @param endIndex, must be within the buffer index range
+&nbsp;     * @throws IndexOutOfBoundsException if the beginIndex is out of bounds
+&nbsp;     */
+&nbsp;    void setEndIndex(int endIndex);
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-22 21:40</div>
+</div>
+</body>
+</html>

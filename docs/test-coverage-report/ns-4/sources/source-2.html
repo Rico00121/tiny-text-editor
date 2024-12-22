@@ -1,0 +1,236 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > EngineImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">fr.istic.aco.editor.kernel</a>
+</div>
+
+<h1>Coverage Summary for Class: EngineImpl (fr.istic.aco.editor.kernel)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">EngineImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (11/11)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (30/30)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package fr.istic.aco.editor.kernel;
+&nbsp;
+&nbsp;public class EngineImpl implements Engine {
+&nbsp;    private final StringBuffer buffer;
+&nbsp;    private String clipboard;
+&nbsp;
+&nbsp;    private final Selection selection;
+&nbsp;
+<b class="fc">&nbsp;    public EngineImpl() {</b>
+<b class="fc">&nbsp;        this.buffer = new StringBuffer();</b>
+<b class="fc">&nbsp;        this.selection = new SelectionImpl(this.buffer);</b>
+<b class="fc">&nbsp;        this.clipboard = &quot;&quot;;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Provides access to the selection control object
+&nbsp;     *
+&nbsp;     * @return the selection object
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public Selection getSelection() {
+<b class="fc">&nbsp;        return selection;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Provides the whole contents of the buffer, as a string
+&nbsp;     *
+&nbsp;     * @return a copy of the buffer&#39;s contents
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public String getBufferContents() {
+<b class="fc">&nbsp;        return buffer.toString();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Provides the clipboard contents
+&nbsp;     *
+&nbsp;     * @return a copy of the clipboard&#39;s contents
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public String getClipboardContents() {
+<b class="fc">&nbsp;        return this.clipboard;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Removes the text within the interval
+&nbsp;     * specified by the selection control object,
+&nbsp;     * from the buffer.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void cutSelectedText() {
+<b class="fc">&nbsp;        this.copySelectedText();</b>
+<b class="fc">&nbsp;        int beginIndex = this.selection.getBeginIndex();</b>
+<b class="fc">&nbsp;        int endIndex = this.selection.getEndIndex();</b>
+<b class="fc">&nbsp;        buffer.delete(beginIndex, endIndex);</b>
+<b class="fc">&nbsp;        selection.setEndIndex(beginIndex);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Copies the text within the interval
+&nbsp;     * specified by the selection control object
+&nbsp;     * into the clipboard.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void copySelectedText() {
+<b class="fc">&nbsp;        this.clipboard = buffer.substring(selection.getBeginIndex(), selection.getEndIndex());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Replaces the text within the interval specified by the selection object with
+&nbsp;     * the contents of the clipboard.
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void pasteClipboard() {
+&nbsp;
+<b class="fc">&nbsp;        insert(clipboard);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Inserts a string in the buffer, which replaces the contents of the selection
+&nbsp;     *
+&nbsp;     * @param s the text to insert
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void insert(String s) {
+<b class="fc">&nbsp;        buffer.replace(selection.getBeginIndex(), selection.getEndIndex(), s);</b>
+<b class="fc">&nbsp;        selection.setEndIndex(selection.getBeginIndex() + s.length());</b>
+<b class="fc">&nbsp;        selection.setBeginIndex(selection.getEndIndex());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Removes the contents of the selection in the buffer
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public void delete() {
+<b class="fc">&nbsp;        int beginIndex = this.selection.getBeginIndex();</b>
+<b class="fc">&nbsp;        int endIndex = this.selection.getEndIndex();</b>
+&nbsp;
+<b class="fc">&nbsp;        if (beginIndex == endIndex &amp;&amp; beginIndex &gt; 0) {</b>
+<b class="fc">&nbsp;            buffer.delete(beginIndex - 1, beginIndex);</b>
+<b class="fc">&nbsp;            selection.setBeginIndex(beginIndex - 1);</b>
+<b class="fc">&nbsp;            selection.setEndIndex(beginIndex - 1);</b>
+&nbsp;        } else {
+<b class="fc">&nbsp;            buffer.delete(beginIndex, endIndex);</b>
+<b class="fc">&nbsp;            selection.setEndIndex(beginIndex);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * It recovers editor using the previous snapshot, which is stored in the memento.
+&nbsp;     *
+&nbsp;     */
+&nbsp;    public void restoreFrom(EditorSnapshot memento) {
+<b class="fc">&nbsp;        this.buffer.replace(0, this.buffer.length(), memento.getBufferContents());</b>
+<b class="fc">&nbsp;        this.selection.setBeginIndex(memento.getBeginIndex());</b>
+<b class="fc">&nbsp;        this.selection.setEndIndex(memento.getEndIndex());</b>
+<b class="fc">&nbsp;        this.clipboard = memento.getClipboardContents();</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * It creates a snapshot of the editor&#39;s state.
+&nbsp;     *
+&nbsp;     * @return the memento
+&nbsp;     */
+&nbsp;    @Override
+&nbsp;    public EditorSnapshot createSnapshot() {
+<b class="fc">&nbsp;        return new EditorSnapshot(this.getBufferContents(), this.selection.getBeginIndex(), this.selection.getEndIndex(), this.clipboard);</b>
+&nbsp;    }
+&nbsp;}
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-22 21:40</div>
+</div>
+</body>
+</html>
