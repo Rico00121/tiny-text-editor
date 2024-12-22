@@ -32,7 +32,7 @@ public class InvokerTest {
 
     @Test
     void moveSelection() {
-        prepareHellodData();
+        prepareHelloData();
 
         invoker.setSelection(1, 2);
         invoker.playCommand(MOVE_SELECTION);
@@ -44,7 +44,7 @@ public class InvokerTest {
 
     @Test
     void copy() {
-        prepareHellodData();
+        prepareHelloData();
 
         invoker.setSelection(1, 3);
         invoker.playCommand(MOVE_SELECTION);
@@ -58,7 +58,7 @@ public class InvokerTest {
 
     @Test
     void cut() {
-        prepareHellodData();
+        prepareHelloData();
 
         invoker.setSelection(1, 3);
         invoker.playCommand(MOVE_SELECTION);
@@ -71,7 +71,7 @@ public class InvokerTest {
 
     @Test
     void delete() {
-        prepareHellodData();
+        prepareHelloData();
 
         invoker.setSelection(1, 3);
         invoker.playCommand(MOVE_SELECTION);
@@ -85,7 +85,7 @@ public class InvokerTest {
 
     @Test
     void paste() {
-        prepareHellodData();
+        prepareHelloData();
 
         invoker.setSelection(1, 3);
         invoker.playCommand(MOVE_SELECTION);
@@ -99,7 +99,7 @@ public class InvokerTest {
 
     @Test
     void replay_insert() {
-        prepareHellodData();
+        prepareHelloData();
         this.invoker.playCommand(START_RECORD);
 
         this.invoker.setText(" world");
@@ -113,7 +113,7 @@ public class InvokerTest {
 
     @Test
     void replay_selection() {
-        prepareHellodData();
+        prepareHelloData();
         //start record
         this.invoker.playCommand(START_RECORD);
 
@@ -133,7 +133,7 @@ public class InvokerTest {
 
     @Test
     void replay_copy() {
-        prepareHellodData();
+        prepareHelloData();
         this.invoker.playCommand(START_RECORD);
         invoker.playCommand(COPY);
         this.invoker.playCommand(STOP_RECORD);
@@ -147,7 +147,7 @@ public class InvokerTest {
 
     @Test
     void replay_cut() {
-        prepareHellodData();
+        prepareHelloData();
         // hello
         this.invoker.playCommand(START_RECORD);
         invoker.playCommand(CUT);
@@ -164,7 +164,7 @@ public class InvokerTest {
 
     @Test
     void replay_delete() {
-        prepareHellodData();
+        prepareHelloData();
         this.invoker.playCommand(START_RECORD);
         invoker.playCommand(DELETE);
         // now is hell
@@ -177,7 +177,7 @@ public class InvokerTest {
 
     @Test
     void replay_paste() {
-        prepareHellodData();
+        prepareHelloData();
         this.invoker.setSelection(1, 2);
         this.invoker.playCommand(MOVE_SELECTION);
         this.invoker.playCommand(COPY);
@@ -205,7 +205,7 @@ public class InvokerTest {
         }
         @Test
         void undo_once_when_past_snapshot_size_is_1_and_future_snapshot_size_is_0() {
-            prepareHellodData();
+            prepareHelloData();
 
             invoker.playCommand(UNDO);
 
@@ -213,7 +213,7 @@ public class InvokerTest {
         }
         @Test
         void undo_multiple_times_when_past_snapshot_size_is_1_and_future_snapshot_size_is_0() {
-            prepareHellodData();
+            prepareHelloData();
             prepareCustomizedData(" pakistan");
             prepareCustomizedData(" china");
             prepareCustomizedData(" india");
@@ -228,7 +228,7 @@ public class InvokerTest {
         @Test
         void undo_once_when_past_snapshot_size_is_2_and_future_snapshot_size_is_0() {
             // 7 hellos
-            prepareHellodData();
+            prepareHelloData();
             prepareCustomizedData(" pakistan");
             prepareCustomizedData(" china");
             prepareCustomizedData(" india");
@@ -244,7 +244,7 @@ public class InvokerTest {
         @Test
         void undo_once_when_past_snapshot_size_is_1_and_future_snapshot_size_is_1() {
             // 7 hellos
-            prepareHellodData();
+            prepareHelloData();
             prepareCustomizedData(" pakistan");
             prepareCustomizedData(" china");
             prepareCustomizedData(" india");
@@ -270,7 +270,7 @@ public class InvokerTest {
         }
         @Test
         void redo_once_when_past_snapshot_is_1_and_future_snapshot_is_0() {
-            prepareHellodData();
+            prepareHelloData();
             invoker.playCommand(UNDO);
 
             invoker.playCommand(REDO);
@@ -280,7 +280,7 @@ public class InvokerTest {
 
         @Test
         void redo_multiple_times_when_past_snapshot_size_is_1_and_future_snapshot_size_is_0() {
-            prepareHellodData();
+            prepareHelloData();
             prepareCustomizedData(" pakistan");
             prepareCustomizedData(" china");
             prepareCustomizedData(" india");
@@ -300,7 +300,7 @@ public class InvokerTest {
         @Test
         void redo_multiple_times_when_past_snapshot_size_is_1_and_future_snapshot_size_is_1() {
             //7 hellos
-            prepareHellodData();
+            prepareHelloData();
             prepareCustomizedData(" pakistan");
             prepareCustomizedData(" china");
             prepareCustomizedData(" india");
@@ -325,7 +325,7 @@ public class InvokerTest {
     class UndoRedoTest {
         @Test
         void undo_redo_when_past_snapshot_size_is_1_and_future_snapshot_size_is_0() {
-            prepareHellodData();
+            prepareHelloData();
             prepareCustomizedData(" pakistan");
             prepareCustomizedData(" china");
 
@@ -340,7 +340,7 @@ public class InvokerTest {
         @Test
         void undo_redo_when_past_snapshot_size_is_1_and_future_snapshot_size_is_1() {
             //7 hellos
-            prepareHellodData();
+            prepareHelloData();
             prepareCustomizedData(" pakistan");
             prepareCustomizedData(" china");
             prepareCustomizedData(" india");
@@ -364,7 +364,7 @@ public class InvokerTest {
         invoker.playCommand(INSERT);
     }
 
-    private void prepareHellodData() {
+    private void prepareHelloData() {
         prepareCustomizedData("hello");
     }
 }
