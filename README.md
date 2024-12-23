@@ -12,9 +12,9 @@ here:
 
 - [Application design](./docs/design.md)
 - [Application architecture](./docs/architecture.md)
-- [Javadoc](./docs/javadoc/index.html)
+- [Javadoc](./docs/javadoc/index-files/index-1.html)
 
-PDF prints of the documentation can be found [here](./docs/pdf).
+PDF prints of the documentation can be found [here](./docs).
 
 ### Features
 
