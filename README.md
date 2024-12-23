@@ -57,15 +57,15 @@ PDF prints of the documentation can be found [here](./docs/pdf).
 
 | **Command** | **Description**                                                                          |
 |-------------|------------------------------------------------------------------------------------------|
-| Insert      | Type any single character                                                                |
-| Select      | `SHIFT` + `→`, `SHIFT` + `←` or use the mouse                                            |
-| Select all  | `SHIFT` + `A`                                                                            |
-| Delete      | `Backspace`                                                                              |
-| Copy        | `CTRL` + `C`                                                                             |
-| Cut         | `CTRL` + `X`                                                                             |
-| Paste       | `CTRL` + `V`                                                                             |
-| Undo        | `CTRL` + `Z`                                                                             |
-| Redo        | `CTRL` + `shift` + `z`                                                                   |
+| Insert      | Type any single character or multiple characters and press "Insert" button               |
+| Select      | Select the beginning index and the ending index to make a selection                      |
+| Select all  | To select all choose begin index as 0 and end index as length of the entire buffer       |
+| Delete      | Press the delete button                                                                  |
+| Copy        | Make a selection first and then press the copy button                                    |
+| Cut         | Make a selection first and then pres the cut button                                      |
+| Paste       | Press the paste button                                                                   |
+| Undo        | Press the undo button                                                                    |
+| Redo        | Press the redo button                                                                    |
 | Record      | Click the "Start Recording" button to start and click "Stop Recording" to stop recording |
 | Replay      | Click the "Play Recording" button to replay all the actions                              |
 
