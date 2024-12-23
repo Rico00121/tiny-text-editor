@@ -1,13 +1,14 @@
 # Design
 
-The mini text editor is a web-based frontend that interacts using REST API with a backend written in Java. The backend is responsible for managing the text editing operations and providing the frontend with the necessary functionality to perform these operations. The backend is built using the Spring Boot framework, which provides a robust and scalable platform for developing web applications and REST APIs. 
-The frontend is build using electron.
+The tiny text editor is a web-based frontend that interacts using REST API with a backend written in Java. The backend is responsible for managing the text editing operations and providing the frontend with the necessary functionality to perform these operations. The backend is built using the Spring Boot framework, which provides a robust and scalable platform for developing web applications and REST APIs.
+The frontend is built using Electron, which allows the use of web technologies to create a desktop application.
+
 To ensure the robustness and correctness of the backend, over 40 unit tests were written using JUnit and Mockito, achieving over 90% test coverage. These tests verify the functionality of various backend components, ensuring the editor performs efficiently and reliably.
 
 This section provides an overview of the design decisions made during the development of the application and the rationale behind each choice.
 
 ## UML Diagram
-![url-image](/img/main_UML.png)
+![url-image](./img/main_UML.png)
 
 ## Backend Design choices
 

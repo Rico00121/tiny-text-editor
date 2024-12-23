@@ -27,7 +27,7 @@ Click here to go back to the [README](../README.md).
         - [Memento](#memento)
         - [Configuration](#configuration)
     - [Controller Layer](#controller-layer)
-        - [EngineController](#enginecontroller)
+        - [EditorController](#EditorController)
 3. [Component relationships](#component-relationships)
 
 ---
