@@ -1,14 +1,9 @@
-# Mini Text Editor
-
-### Authors:
-
-**1: Muhammad Ihtisham Alam Khan**  
-**2: Ruikang Tao**
+# Tiny Text Editor
+This project was completed by **Muhammad Ihtisham Alam Khan** and **Ruikang Tao** as part of the course 
+Object-Oriented Analysis and Design (ACO) in the 2024 M1 Informatique program at the University of Rennes 1, ISTIC.
+The work was carried out under the supervision of **Adrian Le Roch**.
 
 ## Description:
-
-Project for Object-Oriented Analysis and Design (ACO) 2024 M1 Informatique at the University of Rennes 1 ISTIC under the
-supervision of **Adrian Le Roch**.
 
 We have provided the list of the editor's [features](#Features), [commands](#Commands), and how
 to [switch to different versions](#switch-to-different-versions), and instructions
