@@ -1,11 +1,16 @@
 package fr.istic.aco.editor.kernel;
 
+/**
+ * The type Engine, the kernel of the text Editor.
+ */
 public class EngineImpl implements Engine {
     private final StringBuffer buffer;
+    private final Selection selection;
     private String clipboard;
 
-    private final Selection selection;
-
+    /**
+     * Instantiates a new Engine.
+     */
     public EngineImpl() {
         this.buffer = new StringBuffer();
         this.selection = new SelectionImpl(this.buffer);
@@ -109,7 +114,6 @@ public class EngineImpl implements Engine {
 
     /**
      * It recovers editor using the previous snapshot, which is stored in the memento.
-     *
      */
     public void restoreFrom(EditorSnapshot memento) {
         this.buffer.replace(0, this.buffer.length(), memento.getBufferContents());

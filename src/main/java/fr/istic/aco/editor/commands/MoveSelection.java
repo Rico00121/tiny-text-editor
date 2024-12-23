@@ -3,11 +3,22 @@ package fr.istic.aco.editor.commands;
 import fr.istic.aco.editor.Invoker;
 import fr.istic.aco.editor.kernel.*;
 
+/**
+ * The type Move selection.
+ */
 public class MoveSelection extends AbstractConcreteCommand implements CommandOriginator {
     private final Invoker invoker;
     private final Recorder recorder;
     private final UndoManager undoManager;
 
+    /**
+     * Instantiates a new Move Selection command.
+     *
+     * @param engine      the engine
+     * @param invoker     the invoker
+     * @param recorder    the recorder
+     * @param undoManager the undo manager
+     */
     public MoveSelection(Engine engine, Invoker invoker, Recorder recorder, UndoManager undoManager) {
         super(engine);
         this.invoker = invoker;
