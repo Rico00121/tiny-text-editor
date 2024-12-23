@@ -1,0 +1,156 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Invoker</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">fr.istic.aco.editor</a>
+</div>
+
+<h1>Coverage Summary for Class: Invoker (fr.istic.aco.editor)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">Invoker</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (8/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (12/12)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package fr.istic.aco.editor;
+&nbsp;
+&nbsp;import fr.istic.aco.editor.commands.Command;
+&nbsp;
+&nbsp;import java.util.HashMap;
+&nbsp;import java.util.Map;
+&nbsp;
+&nbsp;public class Invoker {
+&nbsp;    private String text;
+&nbsp;
+&nbsp;    private int beginIndex;
+&nbsp;
+&nbsp;    private int endIndex;
+&nbsp;    private final Map&lt;String, Command&gt; commands;
+&nbsp;
+&nbsp;
+<b class="fc">&nbsp;    public Invoker() {</b>
+<b class="fc">&nbsp;        this.text = &quot;&quot;;</b>
+<b class="fc">&nbsp;        this.commands = new HashMap&lt;&gt;();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setText(String text) {
+<b class="fc">&nbsp;        this.text = text;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void setSelection(int beginIndex, int endIndex) {
+<b class="fc">&nbsp;        this.beginIndex = beginIndex;</b>
+<b class="fc">&nbsp;        this.endIndex = endIndex;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public int getBeginIndex() {
+<b class="fc">&nbsp;        return beginIndex;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public int getEndIndex() {
+<b class="fc">&nbsp;        return endIndex;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public String getText() {
+<b class="fc">&nbsp;        return text;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void addCommand(String id, Command command) {
+<b class="fc">&nbsp;        commands.put(id, command);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public void playCommand(String id) {
+<b class="fc">&nbsp;        Command command = commands.get(id);</b>
+<b class="fc">&nbsp;        command.execute();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-22 21:40</div>
+</div>
+</body>
+</html>

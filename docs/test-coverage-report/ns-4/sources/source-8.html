@@ -1,0 +1,221 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > UndoManager</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">fr.istic.aco.editor.kernel</a>
+</div>
+
+<h1>Coverage Summary for Class: UndoManager (fr.istic.aco.editor.kernel)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">UndoManager</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (1/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (8/8)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    100%
+  </span>
+  <span class="absValue">
+    (49/49)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package fr.istic.aco.editor.kernel;
+&nbsp;
+&nbsp;
+&nbsp;import java.util.Stack;
+&nbsp;
+&nbsp;/**
+&nbsp; * This class manages the undo, redo and store operations.
+&nbsp; */
+&nbsp;public class UndoManager {
+&nbsp;    private final Stack&lt;EditorSnapshot&gt; pastStates;
+&nbsp;    private final Stack&lt;EditorSnapshot&gt; futureStates;
+&nbsp;    private final Stack&lt;Pair&lt;CommandOriginator, Memento&gt;&gt; pastCommands;
+&nbsp;    private final Stack&lt;Pair&lt;CommandOriginator, Memento&gt;&gt; futureCommands;
+<b class="fc">&nbsp;    int k = 5; //we store a snapshot after every k commands</b>
+&nbsp;    private final Engine engine;
+&nbsp;    private boolean isUndoRedo;
+&nbsp;    /**
+&nbsp;     * constructor for UndoManager
+&nbsp;     */
+<b class="fc">&nbsp;    public UndoManager(Engine engine) {</b>
+<b class="fc">&nbsp;        this.engine = engine;</b>
+<b class="fc">&nbsp;        pastStates = new Stack&lt;&gt;();</b>
+<b class="fc">&nbsp;        pastStates.add(new EditorSnapshot(this.engine.getBufferContents(),</b>
+<b class="fc">&nbsp;                engine.getSelection().getBeginIndex(),</b>
+<b class="fc">&nbsp;                engine.getSelection().getEndIndex(),</b>
+<b class="fc">&nbsp;                engine.getClipboardContents()));</b>
+<b class="fc">&nbsp;        futureStates = new Stack&lt;&gt;();</b>
+<b class="fc">&nbsp;        pastCommands = new Stack&lt;&gt;();</b>
+<b class="fc">&nbsp;        futureCommands = new Stack&lt;&gt;();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This method is used to store the commands upon each operation
+&nbsp;     */
+&nbsp;    public void storeCommand(CommandOriginator originator) {
+<b class="fc">&nbsp;        if (!isUndoRedo) {</b>
+<b class="fc">&nbsp;            clearFuture();</b>
+<b class="fc">&nbsp;            Memento memento = originator.generateMemento();</b>
+<b class="fc">&nbsp;            pastCommands.push(new Pair&lt;&gt;(originator, memento));</b>
+<b class="fc">&nbsp;            this.storeSnapshotOrNot();</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private void clearFuture() {
+<b class="fc">&nbsp;        futureCommands.clear();</b>
+<b class="fc">&nbsp;        futureStates.clear();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This method is used to store the snapshot of the editor upon each k operations
+&nbsp;     */
+&nbsp;    private void storeSnapshotOrNot() {
+<b class="fc">&nbsp;        int totalSize = this.pastCommands.size();</b>
+<b class="fc">&nbsp;        if ( totalSize % k == 0) {</b>
+<b class="fc">&nbsp;            pastStates.push(engine.createSnapshot());</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    private void backToPreviousState() {
+<b class="fc">&nbsp;        int totalSize = this.pastCommands.size();</b>
+<b class="fc">&nbsp;        if ( totalSize % k == 0) {</b>
+<b class="fc">&nbsp;            futureStates.push(pastStates.pop());</b>
+&nbsp;        }
+<b class="fc">&nbsp;        engine.restoreFrom(pastStates.peek());</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    /**
+&nbsp;     * This method is used to undo the last operation
+&nbsp;     * It will restore the previous state of the editor and use k to apply the last k commands, and then that state becomes the current state
+&nbsp;     * we then adjust the past and future states and commands accordingly
+&nbsp;     */
+&nbsp;    public void undo() {
+<b class="fc">&nbsp;        isUndoRedo = true;</b>
+<b class="fc">&nbsp;        if (!pastCommands.isEmpty()) {</b>
+<b class="fc">&nbsp;            backToPreviousState();</b>
+&nbsp;
+<b class="fc">&nbsp;            futureCommands.push(pastCommands.pop());</b>
+<b class="fc">&nbsp;            for (int i = (pastStates.size() - 1) * k; i &lt;pastCommands.size(); i++) {</b>
+&nbsp;
+<b class="fc">&nbsp;                Pair&lt;CommandOriginator, Memento&gt; currentPair = pastCommands.elementAt(i);</b>
+<b class="fc">&nbsp;                CommandOriginator command = currentPair.first();</b>
+<b class="fc">&nbsp;                Memento memento = currentPair.second();</b>
+<b class="fc">&nbsp;                command.restoreFrom(memento);</b>
+<b class="fc">&nbsp;                command.execute();</b>
+&nbsp;            }
+&nbsp;        }
+<b class="fc">&nbsp;        isUndoRedo = false;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private void moveLastFutureToPastOrNot() {
+<b class="fc">&nbsp;        int totalSize = this.pastCommands.size();</b>
+<b class="fc">&nbsp;        if ( totalSize % k == 0) {</b>
+<b class="fc">&nbsp;            pastStates.push(futureStates.pop());</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    public void redo() {
+<b class="fc">&nbsp;        isUndoRedo = true;</b>
+<b class="fc">&nbsp;        if (!futureCommands.isEmpty()) {</b>
+<b class="fc">&nbsp;            Pair&lt;CommandOriginator, Memento&gt; currentPair = futureCommands.pop();</b>
+<b class="fc">&nbsp;            pastCommands.push(currentPair);</b>
+<b class="fc">&nbsp;            moveLastFutureToPastOrNot();</b>
+&nbsp;
+<b class="fc">&nbsp;            CommandOriginator command = currentPair.first();</b>
+<b class="fc">&nbsp;            Memento memento = currentPair.second();</b>
+&nbsp;
+<b class="fc">&nbsp;            command.restoreFrom(memento);</b>
+<b class="fc">&nbsp;            command.execute();</b>
+&nbsp;        }
+<b class="fc">&nbsp;        isUndoRedo = false;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;}
+&nbsp;
+&nbsp;
+&nbsp;
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-22 21:40</div>
+</div>
+</body>
+</html>

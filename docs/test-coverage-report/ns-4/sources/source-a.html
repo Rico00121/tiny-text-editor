@@ -1,0 +1,146 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <meta http-equiv="Content-Type" content="text/html;charset=UTF-8"> 
+  <title>Coverage Report > Engine</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">fr.istic.aco.editor.kernel</a>
+</div>
+
+<h1>Coverage Summary for Class: Engine (fr.istic.aco.editor.kernel)</h1>
+
+<table class="coverageStats">
+
+<tr>
+  <th class="name">Class</th>
+</tr>
+  <tr>
+    <td class="name">Engine$MockitoMock$WSCd68e3</td>
+  </tr>
+  <tr>
+    <td class="name">Engine$MockitoMock$WSCd68e3$auxiliary$druJUZke</td>
+  </tr>
+  <tr>
+    <td class="name">Engine$MockitoMock$WSCd68e3$auxiliary$xN5kacac</td>
+  </tr>
+<tr>
+  <td class="name"><strong>Total</strong></td>
+</tr>
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package fr.istic.aco.editor.kernel;
+&nbsp;
+&nbsp;
+&nbsp;/**
+&nbsp; * Main API for the text editing engine
+&nbsp; *
+&nbsp; * @author plouzeau
+&nbsp; * @version 1.0
+&nbsp; */
+&nbsp;public interface Engine {
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Provides access to the selection control object
+&nbsp;     * @return the selection object
+&nbsp;     */
+&nbsp;    Selection getSelection();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Provides the whole contents of the buffer, as a string
+&nbsp;     * @return a copy of the buffer&#39;s contents
+&nbsp;     */
+&nbsp;    String getBufferContents();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Provides the clipboard contents
+&nbsp;     * @return a copy of the clipboard&#39;s contents
+&nbsp;     */
+&nbsp;    String getClipboardContents();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Removes the text within the interval
+&nbsp;     * specified by the selection control object,
+&nbsp;     * from the buffer.
+&nbsp;     */
+&nbsp;    void cutSelectedText();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Copies the text within the interval
+&nbsp;     * specified by the selection control object
+&nbsp;     * into the clipboard.
+&nbsp;     */
+&nbsp;    void copySelectedText();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Replaces the text within the interval specified by the selection object with
+&nbsp;     * the contents of the clipboard.
+&nbsp;     */
+&nbsp;    void pasteClipboard();
+&nbsp;
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Inserts a string in the buffer, which replaces the contents of the selection
+&nbsp;     * @param s the text to insert
+&nbsp;     */
+&nbsp;    void insert(String s);
+&nbsp;
+&nbsp;    /**
+&nbsp;     * Removes the contents of the selection in the buffer
+&nbsp;     */
+&nbsp;    void delete();
+&nbsp;
+&nbsp;    /**
+&nbsp;     * It recovers editor using the previous snapshot, which is stored in the memento.
+&nbsp;     *
+&nbsp;     */
+&nbsp;    void restoreFrom(EditorSnapshot m);
+&nbsp;
+&nbsp;    EditorSnapshot createSnapshot();
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2024-12-22 21:40</div>
+</div>
+</body>
+</html>
