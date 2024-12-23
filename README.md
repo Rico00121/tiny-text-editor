@@ -93,7 +93,7 @@ git clone https://github.com/Rico00121/tiny-text-editor.git
 ```
 
 ### Start the client app
-
+> Make sure you have started the backend service on local port 8080
 ```shell
 cd tiny-editor-app
 yarn install
