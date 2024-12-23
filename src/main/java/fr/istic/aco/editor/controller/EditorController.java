@@ -12,6 +12,9 @@ import java.util.Objects;
 import static fr.istic.aco.editor.Configuration.INSERT;
 import static fr.istic.aco.editor.Configuration.MOVE_SELECTION;
 
+/**
+ * The type Editor controller.
+ */
 @RestController
 public class EditorController {
 
@@ -19,12 +22,25 @@ public class EditorController {
     private final Invoker invoker;
     private final Recorder recorder;
 
+    /**
+     * Instantiates a new Editor controller.
+     *
+     * @param engine   the engine
+     * @param invoker  the invoker
+     * @param recorder the recorder
+     */
     public EditorController(Engine engine, Invoker invoker, Recorder recorder) {
         this.engine = engine;
         this.invoker = invoker;
         this.recorder = recorder;
     }
 
+    /**
+     * Handle event response entity.
+     *
+     * @param event the event
+     * @return the response entity
+     */
     @PostMapping("/event")
     public ResponseEntity<EventResponse> handleEvent(@RequestBody EventRequest event) {
         if (recorder.isReplaying()) {

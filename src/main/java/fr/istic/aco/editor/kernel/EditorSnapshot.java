@@ -25,19 +25,39 @@ public class EditorSnapshot {
         this.clipboard = clipboard;
     }
 
-    // Getter methods to retrieve the state
+    /**
+     * Gets buffer contents.
+     *
+     * @return the buffer contents
+     */
+// Getter methods to retrieve the state
     public String getBufferContents() {
         return bufferContent;
     }
 
+    /**
+     * Gets begin index.
+     *
+     * @return the begin index
+     */
     public int getBeginIndex() {
         return beginIndex;
     }
 
+    /**
+     * Gets end index.
+     *
+     * @return the end index
+     */
     public int getEndIndex() {
         return endIndex;
     }
 
+    /**
+     * Gets clipboard contents.
+     *
+     * @return the clipboard contents
+     */
     public String getClipboardContents() {
         return clipboard;
     }

@@ -11,18 +11,21 @@ public interface Engine {
 
     /**
      * Provides access to the selection control object
+     *
      * @return the selection object
      */
     Selection getSelection();
 
     /**
-     * Provides the whole contents of the buffer, as a string
+     * Provides the whole contents of the Engine buffer, as a string
+     *
      * @return a copy of the buffer's contents
      */
     String getBufferContents();
 
     /**
      * Provides the clipboard contents
+     *
      * @return a copy of the clipboard's contents
      */
     String getClipboardContents();
@@ -50,6 +53,7 @@ public interface Engine {
 
     /**
      * Inserts a string in the buffer, which replaces the contents of the selection
+     *
      * @param s the text to insert
      */
     void insert(String s);
@@ -62,8 +66,14 @@ public interface Engine {
     /**
      * It recovers editor using the previous snapshot, which is stored in the memento.
      *
+     * @param m the m
      */
     void restoreFrom(EditorSnapshot m);
 
+    /**
+     * Create snapshot editor snapshot.
+     *
+     * @return the editor snapshot
+     */
     EditorSnapshot createSnapshot();
 }

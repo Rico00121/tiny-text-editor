@@ -2,9 +2,17 @@ package fr.istic.aco.editor.commands;
 
 import fr.istic.aco.editor.kernel.Recorder;
 
+/**
+ * The type Replay.
+ */
 public class Replay implements Command{
    private final Recorder recorder;
 
+    /**
+     * Instantiates a new Replay command.
+     *
+     * @param recorder the recorder
+     */
     public Replay(Recorder recorder) {
         this.recorder = recorder;
     }
