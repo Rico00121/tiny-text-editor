@@ -81,7 +81,7 @@ public class UndoManager {
 
     /**
      * This method is used to undo the last operation
-     * It will restore the previous state of the editor and use k to apply the last k commands, and then that state becomes the current state
+     * It will restore the previous state of the editor and use k to apply the last k commands, and then the previous state becomes the current state
      * we then adjust the past and future states and commands accordingly
      */
     public void undo() {

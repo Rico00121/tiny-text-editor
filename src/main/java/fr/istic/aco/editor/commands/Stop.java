@@ -3,7 +3,7 @@ package fr.istic.aco.editor.commands;
 import fr.istic.aco.editor.kernel.Recorder;
 
 /**
- * The type Stop.
+ * The Stop recording concrete command.
  */
 public class Stop implements Command{
     private final Recorder recorder;
@@ -17,6 +17,9 @@ public class Stop implements Command{
         this.recorder = recorder;
     }
 
+    /**
+     * Execute the stop recording command.
+     */
     @Override
     public void execute() {
         this.recorder.stop();

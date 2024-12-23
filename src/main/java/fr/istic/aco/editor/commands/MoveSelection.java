@@ -4,7 +4,7 @@ import fr.istic.aco.editor.Invoker;
 import fr.istic.aco.editor.kernel.*;
 
 /**
- * The type Move selection.
+ * The Move selection concrete command.
  */
 public class MoveSelection extends AbstractConcreteCommand implements CommandOriginator {
     private final Invoker invoker;
@@ -26,6 +26,10 @@ public class MoveSelection extends AbstractConcreteCommand implements CommandOri
         this.undoManager = undoManager;
     }
 
+    /**
+     * Execute the move selection command.
+     * After moving the selection it saves the command in the recorder and the undo manager.
+     */
     @Override
     public void execute() {
         if (this.invoker.getEndIndex() < this.engine.getSelection().getBeginIndex() ){
@@ -39,10 +43,21 @@ public class MoveSelection extends AbstractConcreteCommand implements CommandOri
         this.undoManager.storeCommand(this);
     }
 
+    /**
+     * Generate a memento.
+     *
+     * @return the memento
+     */
     @Override
     public Memento generateMemento() {
         return new SelectMemento(this.invoker.getBeginIndex(), this.invoker.getEndIndex());
     }
+
+    /**
+     * Restore from a memento.
+     *
+     * @param memento the memento
+     */
     @Override
     public void restoreFrom(Memento memento) {
         SelectMemento selectMemento = (SelectMemento) memento;

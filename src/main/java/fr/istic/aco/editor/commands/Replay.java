@@ -3,7 +3,7 @@ package fr.istic.aco.editor.commands;
 import fr.istic.aco.editor.kernel.Recorder;
 
 /**
- * The type Replay.
+ * The Replay concrete command.
  */
 public class Replay implements Command{
    private final Recorder recorder;
@@ -17,6 +17,9 @@ public class Replay implements Command{
         this.recorder = recorder;
     }
 
+    /**
+     * Execute the replay command.
+     */
     @Override
     public void execute() {
         this.recorder.replay();

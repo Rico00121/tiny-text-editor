@@ -4,7 +4,7 @@ import fr.istic.aco.editor.Invoker;
 import fr.istic.aco.editor.kernel.*;
 
 /**
- * The type Insert.
+ * The Insert concrete command.
  */
 public class Insert extends AbstractConcreteCommand implements CommandOriginator {
     private final Invoker invoker;
@@ -25,6 +25,11 @@ public class Insert extends AbstractConcreteCommand implements CommandOriginator
         this.recorder = recorder;
         this.undoManager = undoManager;
     }
+
+    /**
+     * Execute the insert command.
+     * After insert it saves the command in the recorder and the undo manager.
+     */
     @Override
     public void execute() {
         this.engine.insert(invoker.getText());
@@ -32,11 +37,21 @@ public class Insert extends AbstractConcreteCommand implements CommandOriginator
         this.undoManager.storeCommand(this);
     }
 
+    /**
+     * Generate a memento.
+     *
+     * @return the memento
+     */
     @Override
     public Memento generateMemento() {
         return new InsertMemento(invoker.getText());
     }
 
+    /**
+     * Restore from a memento.
+     *
+     * @param memento the memento
+     */
     @Override
     public void restoreFrom(Memento memento) {
         InsertMemento insertMemento = (InsertMemento) memento;

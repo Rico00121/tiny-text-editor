@@ -5,7 +5,7 @@ package fr.istic.aco.editor.commands;
  */
 public interface Command {
     /**
-     * Execute.
+     * Execute method for the command.
      */
     void execute();
 }

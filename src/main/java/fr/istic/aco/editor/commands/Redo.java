@@ -4,7 +4,7 @@ package fr.istic.aco.editor.commands;
 import fr.istic.aco.editor.kernel.UndoManager;
 
 /**
- * The type Redo.
+ * The Redo concrete command.
  */
 public class Redo implements Command{
     private final UndoManager undoManager;
@@ -18,6 +18,9 @@ public class Redo implements Command{
         this.undoManager = undoManager;
     }
 
+    /**
+     * Execute the redo command.
+     */
     @Override
     public void execute() {
         this.undoManager.redo();

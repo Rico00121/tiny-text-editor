@@ -3,12 +3,10 @@ package fr.istic.aco.editor.commands;
 import fr.istic.aco.editor.kernel.Engine;
 
 /**
- * The type Abstract concrete command.
+ * The Abstract concrete command.
+ * This is a class that provides the engine instance to the concrete commands.
  */
 public class AbstractConcreteCommand {
-    /**
-     * The Engine.
-     */
     protected Engine engine;
 
     /**

@@ -22,12 +22,20 @@ public class Cut extends AbstractConcreteCommand implements CommandOriginator {
         this.recorder = recorder;
     }
 
+    /**
+     * Execute the cut command.
+     */
     @Override
     public void execute() {
         this.engine.cutSelectedText();
         this.recorder.save(this);
     }
 
+    /**
+     * Generate a memento.
+     *
+     * @return the memento
+     */
     @Override
     public Memento generateMemento() {
         return null;
